@@ -17,6 +17,7 @@ interface ApiResponse {
   page: number;
   limit: number;
   totalPages: number;
+  categories: string[];
 }
 
 const POLL_INTERVAL = 60_000;
@@ -55,17 +56,21 @@ export default function PrestamosPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [returning, setReturning] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   const [now, setNow] = useState(Date.now());
 
   const fetchLoans = useCallback(
-    async (pageNum: number) => {
+    async (pageNum: number, cat: string) => {
       try {
         const params = new URLSearchParams({
           page: String(pageNum),
           limit: String(ITEMS_PER_PAGE),
         });
+        if (cat) params.set("category", cat);
         const res = await fetch(`/api/loans/active?${params}`);
         if (!res.ok) return;
         const data: ApiResponse = await res.json();
@@ -73,6 +78,7 @@ export default function PrestamosPage() {
         setTotal(data.total);
         setOverdueCount(data.overdueCount);
         setTotalPages(data.totalPages);
+        setCategories(data.categories);
       } finally {
         setLoading(false);
       }
@@ -82,10 +88,10 @@ export default function PrestamosPage() {
 
   // Initial load and polling
   useEffect(() => {
-    fetchLoans(page);
-    const interval = setInterval(() => fetchLoans(page), POLL_INTERVAL);
+    fetchLoans(page, category);
+    const interval = setInterval(() => fetchLoans(page, category), POLL_INTERVAL);
     return () => clearInterval(interval);
-  }, [fetchLoans, page]);
+  }, [fetchLoans, page, category]);
 
   // Tick for duration updates
   useEffect(() => {
@@ -106,13 +112,55 @@ export default function PrestamosPage() {
     );
   }, [loans, search]);
 
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const params = new URLSearchParams({ page: "1", limit: "9999" });
+      if (category) params.set("category", category);
+      const res = await fetch(`/api/loans/active?${params}`);
+      if (!res.ok) return;
+      const data: ApiResponse = await res.json();
+
+      const timestamp = Date.now();
+      const rows = data.loans.map((l) => {
+        const duration = formatDuration(l.loanDate, timestamp);
+        return [
+          l.student.run,
+          l.student.name,
+          l.item.internalCode,
+          l.item.name,
+          l.item.categoryName,
+          new Date(l.loanDate).toLocaleString("es-CL"),
+          duration,
+          l.isOverdue ? "Sí" : "No",
+        ];
+      });
+
+      const header = ["RUN", "Estudiante", "Código", "Artículo", "Categoría", "Hora Inicio", "Duración", "Vencido"];
+      const csvContent = [header, ...rows]
+        .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const bom = "\uFEFF";
+      const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `prestamos-activos-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   async function handleReturn(loanId: string) {
     if (!confirm("¿Confirmar devolución manual de este préstamo?")) return;
     setReturning(loanId);
     try {
       const res = await fetch(`/api/loans/${loanId}/return`, { method: "POST" });
       if (res.ok) {
-        await fetchLoans(page);
+        await fetchLoans(page, category);
         setNow(Date.now());
       }
     } finally {
@@ -184,13 +232,34 @@ export default function PrestamosPage() {
             />
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-6 py-3 bg-vgsurface-highest text-vgon-surface font-bold text-sm rounded-full hover:bg-vgsurface-container-high transition-colors">
-              <span className="material-symbols-outlined">filter_list</span>
-              Filtros
-            </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-vgprimary text-vgon-primary font-bold text-sm rounded-full shadow-lg shadow-vgprimary/20 hover:scale-[1.02] transition-transform">
-              <span className="material-symbols-outlined">download</span>
-              Exportar
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-vgon-surface-variant text-[18px] pointer-events-none">
+                filter_list
+              </span>
+              <select
+                value={category}
+                onChange={(e) => { setCategory(e.target.value); setPage(1); }}
+                className="appearance-none pl-10 pr-10 py-3 bg-vgsurface-highest text-vgon-surface font-bold text-sm rounded-full hover:bg-vgsurface-container-high transition-colors cursor-pointer border-none focus:ring-2 focus:ring-vgsecondary/50"
+                style={{ fontFamily: "Inter, sans-serif" }}
+              >
+                <option value="">Todas las categorías</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-vgon-surface-variant text-[18px] pointer-events-none">
+                expand_more
+              </span>
+            </div>
+            <button
+              onClick={handleExport}
+              disabled={exporting || total === 0}
+              className="flex items-center gap-2 px-6 py-3 bg-vgprimary text-vgon-primary font-bold text-sm rounded-full shadow-lg shadow-vgprimary/20 hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <span className={`material-symbols-outlined ${exporting ? "animate-spin" : ""}`}>
+                {exporting ? "progress_activity" : "download"}
+              </span>
+              {exporting ? "Exportando..." : "Exportar"}
             </button>
           </div>
         </div>
@@ -232,7 +301,7 @@ export default function PrestamosPage() {
                 {filteredLoans.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-16 text-center text-vgoutline">
-                      {search
+                      {search || category
                         ? "No se encontraron préstamos con ese criterio."
                         : "No hay préstamos activos en esta sede."}
                     </td>

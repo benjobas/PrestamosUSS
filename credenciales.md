@@ -21,3 +21,6 @@
 - Valdivia
 - Las Tres Pascualas
 - Paicaví
+
+
+npx tsx scripts/seed-users.ts

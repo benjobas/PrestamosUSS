@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
   const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "10", 10)));
   const search = searchParams.get("search")?.trim() || "";
+  const category = searchParams.get("category")?.trim() || "";
 
   const sedeId = session.user.sedeId;
 
@@ -22,6 +23,10 @@ export async function GET(request: NextRequest) {
     sedeId,
     returnDate: null,
   };
+
+  if (category) {
+    where.item = { category: { name: category } };
+  }
 
   if (search) {
     where.OR = [
@@ -32,7 +37,14 @@ export async function GET(request: NextRequest) {
     ];
   }
 
-  const [loans, total] = await Promise.all([
+  // Fetch categories for this sede (for filter dropdown)
+  const categoriesPromise = prisma.category.findMany({
+    where: { sedeId },
+    select: { name: true },
+    orderBy: { name: "asc" },
+  });
+
+  const [loans, total, categoriesRaw] = await Promise.all([
     prisma.loan.findMany({
       where,
       include: {
@@ -50,6 +62,7 @@ export async function GET(request: NextRequest) {
       take: limit,
     }),
     prisma.loan.count({ where }),
+    categoriesPromise,
   ]);
 
   const now = Date.now();
@@ -86,5 +99,6 @@ export async function GET(request: NextRequest) {
     page,
     limit,
     totalPages: Math.ceil(total / limit),
+    categories: categoriesRaw.map((c) => c.name),
   });
 }
