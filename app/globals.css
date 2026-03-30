@@ -23,6 +23,32 @@
   --color-vg-on-error: #ffffff;
   --color-vg-error-container: #ffdad6;
   --color-vg-on-error-container: #93000a;
+
+  /* Tertiary palette */
+  --color-vg-tertiary-fixed: #ffddba;
+  --color-vg-tertiary-fixed-dim: #f2bc82;
+  --color-vg-on-tertiary-fixed: #2b1700;
+  --color-vg-on-tertiary-fixed-variant: #633f0f;
+  --color-vg-on-tertiary-container: #c6955e;
+  --color-vg-tertiary-container: #4f2e00;
+
+  /* Secondary extras */
+  --color-vg-secondary-container: #a2eded;
+  --color-vg-secondary-fixed: #a5eff0;
+  --color-vg-secondary-fixed-dim: #89d3d4;
+
+  /* Surface extras */
+  --color-vg-surface-container: #efedf1;
+  --color-vg-surface-container-high: #e9e7eb;
+  --color-vg-surface-dim: #dad9dd;
+  --color-vg-on-background: #1a1c1e;
+
+  /* Primary extras */
+  --color-vg-primary-fixed: #d6e3ff;
+  --color-vg-primary-fixed-dim: #adc7f7;
+  --color-vg-inverse-primary: #adc7f7;
+  --color-vg-on-primary-fixed: #001b3c;
+  --color-vg-on-primary-fixed-variant: #2d476f;
 }
 
 @theme inline {
@@ -50,6 +76,33 @@
   --color-vgon-error: var(--color-vg-on-error);
   --color-vgerror-container: var(--color-vg-error-container);
   --color-vgon-error-container: var(--color-vg-on-error-container);
+  --color-vgon-background: var(--color-vg-on-background);
+
+  /* Tertiary tokens */
+  --color-vgtertiary-fixed: var(--color-vg-tertiary-fixed);
+  --color-vgtertiary-fixed-dim: var(--color-vg-tertiary-fixed-dim);
+  --color-vgon-tertiary-fixed: var(--color-vg-on-tertiary-fixed);
+  --color-vgon-tertiary-fixed-variant: var(--color-vg-on-tertiary-fixed-variant);
+  --color-vgon-tertiary-container: var(--color-vg-on-tertiary-container);
+  --color-vgtertiary-container: var(--color-vg-tertiary-container);
+
+  /* Secondary extras */
+  --color-vgsecondary-container: var(--color-vg-secondary-container);
+  --color-vgon-secondary-container: var(--color-vg-on-secondary-container);
+  --color-vgsecondary-fixed: var(--color-vg-secondary-fixed);
+  --color-vgsecondary-fixed-dim: var(--color-vg-secondary-fixed-dim);
+
+  /* Surface extras */
+  --color-vgsurface-container: var(--color-vg-surface-container);
+  --color-vgsurface-container-high: var(--color-vg-surface-container-high);
+  --color-vgsurface-dim: var(--color-vg-surface-dim);
+
+  /* Primary extras */
+  --color-vgprimary-fixed: var(--color-vg-primary-fixed);
+  --color-vgprimary-fixed-dim: var(--color-vg-primary-fixed-dim);
+  --color-vginverse-primary: var(--color-vg-inverse-primary);
+  --color-vgon-primary-fixed: var(--color-vg-on-primary-fixed);
+  --color-vgon-primary-fixed-variant: var(--color-vg-on-primary-fixed-variant);
 
   /* Kiosk fonts */
   --font-headline: "Manrope", sans-serif;
@@ -76,6 +129,12 @@ body {
   background-image: radial-gradient(#002045 0.5px, transparent 0.5px);
   background-size: 24px 24px;
   opacity: 0.03;
+}
+
+/* Dashboard glass panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
 }
 
 /* Kiosk-specific styles */
