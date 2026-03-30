@@ -4,23 +4,25 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Kiosk Design System */
-  --color-kiosk-primary: #002045;
-  --color-kiosk-primary-container: #1a365d;
-  --color-kiosk-on-primary: #ffffff;
-  --color-kiosk-on-primary-container: #86a0cd;
-  --color-kiosk-secondary: #13696a;
-  --color-kiosk-on-secondary-container: #1a6d6e;
-  --color-kiosk-surface: #faf9fd;
-  --color-kiosk-surface-container-lowest: #ffffff;
-  --color-kiosk-surface-container-low: #f4f3f7;
-  --color-kiosk-surface-container-highest: #e3e2e6;
-  --color-kiosk-on-surface: #1a1c1e;
-  --color-kiosk-outline-variant: #c4c6cf;
-  --color-kiosk-error: #ba1a1a;
-  --color-kiosk-on-error: #ffffff;
-  --color-kiosk-error-container: #ffdad6;
-  --color-kiosk-on-error-container: #93000a;
+  /* Shared Design System */
+  --color-vg-primary: #002045;
+  --color-vg-primary-container: #1a365d;
+  --color-vg-on-primary: #ffffff;
+  --color-vg-on-primary-container: #86a0cd;
+  --color-vg-secondary: #13696a;
+  --color-vg-on-secondary-container: #1a6d6e;
+  --color-vg-surface: #faf9fd;
+  --color-vg-surface-lowest: #ffffff;
+  --color-vg-surface-low: #f4f3f7;
+  --color-vg-surface-highest: #e3e2e6;
+  --color-vg-on-surface: #1a1c1e;
+  --color-vg-on-surface-variant: #43474e;
+  --color-vg-outline: #74777f;
+  --color-vg-outline-variant: #c4c6cf;
+  --color-vg-error: #ba1a1a;
+  --color-vg-on-error: #ffffff;
+  --color-vg-error-container: #ffdad6;
+  --color-vg-on-error-container: #93000a;
 }
 
 @theme inline {
@@ -29,23 +31,25 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Kiosk colors */
-  --color-kprimary: var(--color-kiosk-primary);
-  --color-kprimary-container: var(--color-kiosk-primary-container);
-  --color-kon-primary: var(--color-kiosk-on-primary);
-  --color-kon-primary-container: var(--color-kiosk-on-primary-container);
-  --color-ksecondary: var(--color-kiosk-secondary);
-  --color-kon-secondary-container: var(--color-kiosk-on-secondary-container);
-  --color-ksurface: var(--color-kiosk-surface);
-  --color-ksurface-lowest: var(--color-kiosk-surface-container-lowest);
-  --color-ksurface-low: var(--color-kiosk-surface-container-low);
-  --color-ksurface-highest: var(--color-kiosk-surface-container-highest);
-  --color-kon-surface: var(--color-kiosk-on-surface);
-  --color-koutline-variant: var(--color-kiosk-outline-variant);
-  --color-kerror: var(--color-kiosk-error);
-  --color-kon-error: var(--color-kiosk-on-error);
-  --color-kerror-container: var(--color-kiosk-error-container);
-  --color-kon-error-container: var(--color-kiosk-on-error-container);
+  /* Vanguard design tokens */
+  --color-vgprimary: var(--color-vg-primary);
+  --color-vgprimary-container: var(--color-vg-primary-container);
+  --color-vgon-primary: var(--color-vg-on-primary);
+  --color-vgon-primary-container: var(--color-vg-on-primary-container);
+  --color-vgsecondary: var(--color-vg-secondary);
+  --color-vgon-secondary-container: var(--color-vg-on-secondary-container);
+  --color-vgsurface: var(--color-vg-surface);
+  --color-vgsurface-lowest: var(--color-vg-surface-lowest);
+  --color-vgsurface-low: var(--color-vg-surface-low);
+  --color-vgsurface-highest: var(--color-vg-surface-highest);
+  --color-vgon-surface: var(--color-vg-on-surface);
+  --color-vgon-surface-variant: var(--color-vg-on-surface-variant);
+  --color-vgoutline: var(--color-vg-outline);
+  --color-vgoutline-variant: var(--color-vg-outline-variant);
+  --color-vgerror: var(--color-vg-error);
+  --color-vgon-error: var(--color-vg-on-error);
+  --color-vgerror-container: var(--color-vg-error-container);
+  --color-vgon-error-container: var(--color-vg-on-error-container);
 
   /* Kiosk fonts */
   --font-headline: "Manrope", sans-serif;
@@ -64,6 +68,14 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Auth background pattern */
+.brand-pattern {
+  background-color: #faf9fd;
+  background-image: radial-gradient(#002045 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  opacity: 0.03;
 }
 
 /* Kiosk-specific styles */

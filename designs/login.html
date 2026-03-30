@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vanguard Loan Management - Iniciar Sesión</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffddba",
+              "surface-container-low": "#f4f3f7",
+              "tertiary-fixed-dim": "#f2bc82",
+              "on-surface": "#1a1c1e",
+              "background": "#faf9fd",
+              "surface-container-highest": "#e3e2e6",
+              "surface": "#faf9fd",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#a5eff0",
+              "outline-variant": "#c4c6cf",
+              "on-tertiary-fixed": "#2b1700",
+              "inverse-primary": "#adc7f7",
+              "on-primary-fixed-variant": "#2d476f",
+              "inverse-on-surface": "#f1f0f4",
+              "on-secondary-fixed-variant": "#004f50",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e9e7eb",
+              "error": "#ba1a1a",
+              "surface-bright": "#faf9fd",
+              "tertiary-container": "#4f2e00",
+              "on-secondary-fixed": "#002020",
+              "on-background": "#1a1c1e",
+              "primary-container": "#1a365d",
+              "outline": "#74777f",
+              "primary-fixed": "#d6e3ff",
+              "on-secondary": "#ffffff",
+              "secondary": "#13696a",
+              "on-primary-fixed": "#001b3c",
+              "tertiary": "#321b00",
+              "on-secondary-container": "#1a6d6e",
+              "surface-container": "#efedf1",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#43474e",
+              "surface-tint": "#455f88",
+              "on-tertiary-fixed-variant": "#633f0f",
+              "surface-dim": "#dad9dd",
+              "secondary-container": "#a2eded",
+              "primary": "#002045",
+              "on-primary-container": "#86a0cd",
+              "on-tertiary-container": "#c6955e",
+              "surface-variant": "#e3e2e6",
+              "inverse-surface": "#2f3033",
+              "primary-fixed-dim": "#adc7f7",
+              "secondary-fixed-dim": "#89d3d4",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      h1, h2, h3 {
+        font-family: 'Manrope', sans-serif;
+      }
+      .brand-pattern {
+        background-color: #faf9fd;
+        background-image: radial-gradient(#002045 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        opacity: 0.03;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Background Texture -->
+<div class="absolute inset-0 brand-pattern pointer-events-none"></div>
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[120px]"></div>
+<!-- Main Login Container -->
+<main class="relative z-10 w-full max-w-[440px] px-6">
+<!-- Brand Identity Header -->
+<div class="text-center mb-10">
+<div class="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-xl mb-6 shadow-xl">
+<span class="material-symbols-outlined text-on-primary text-3xl" data-icon="account_balance">account_balance</span>
+</div>
+<h1 class="text-3xl font-extrabold text-primary tracking-tighter mb-2">Vanguard</h1>
+<p class="text-on-surface-variant font-medium tracking-tight">Precision Loan Management System</p>
+</div>
+<!-- Login Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0px_12px_32px_rgba(26,28,30,0.04)] p-8 md:p-10 border border-outline-variant/10">
+<!-- Error Alert -->
+<div class="mb-6 flex items-center gap-3 p-4 bg-error-container text-on-error-container rounded-xl border border-error/10 animate-pulse-once">
+<span class="material-symbols-outlined text-[20px]" data-icon="error">error</span>
+<span class="text-sm font-semibold font-body">Credenciales Inválidas</span>
+</div>
+<form class="space-y-6">
+<!-- Username Field -->
+<div class="space-y-2">
+<label class="block text-[11px] font-bold tracking-widest text-on-surface-variant uppercase font-label ml-1">
+                        Username
+                    </label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors" data-icon="person">person</span>
+<input class="w-full pl-12 pr-4 py-3.5 bg-surface-container-highest border-none rounded-xl text-on-surface placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-body text-sm" placeholder="admin_vanguard" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<label class="block text-[11px] font-bold tracking-widest text-on-surface-variant uppercase font-label ml-1">
+                        Password
+                    </label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors" data-icon="lock">lock</span>
+<input class="w-full pl-12 pr-4 py-3.5 bg-surface-container-highest border-none rounded-xl text-on-surface placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-body text-sm" placeholder="••••••••••••" type="password"/>
+</div>
+</div>
+<!-- Sede Selector -->
+<div class="space-y-2">
+<label class="block text-[11px] font-bold tracking-widest text-on-surface-variant uppercase font-label ml-1">
+                        Seleccionar Sede
+                    </label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors" data-icon="location_on">location_on</span>
+<select class="appearance-none w-full pl-12 pr-10 py-3.5 bg-surface-container-highest border-none rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-body text-sm cursor-pointer">
+<option disabled="" selected="" value="">Seleccione ubicación...</option>
+<option value="hq">Headquarters (Main Campus)</option>
+<option value="north">North Logistics Hub</option>
+<option value="south">South Distribution Center</option>
+<option value="kiosk-01">Terminal Kiosk 01</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Submit Action -->
+<div class="pt-4">
+<button class="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] transition-all duration-200 text-sm tracking-wide" type="submit">
+                        Iniciar Sesión
+                    </button>
+</div>
+</form>
+</div>
+<!-- Secondary Info -->
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="security">security</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Secure</p>
+<p class="text-[12px] text-on-surface font-semibold">256-bit Encrypted</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="sync">sync</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Status</p>
+<p class="text-[12px] text-on-surface font-semibold">Systems Online</p>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-12 text-center">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-60">
+                Vanguard Loan Management
+            </p>
+<div class="flex justify-center gap-4 mt-4 text-[11px] text-outline font-medium">
+<span>v2.4.0-Enterprise</span>
+<span>•</span>
+<span>© 2024 Vanguard Precision</span>
+</div>
+</footer>
+</main>
+<!-- Side Illustration Decor (Subtle) -->
+<div class="hidden lg:block absolute right-12 bottom-12 w-64 h-64 opacity-10">
+<img class="w-full h-full object-contain grayscale" data-alt="minimalist architectural geometric shapes forming a stylized abstract monolith in professional deep navy blue and teal colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbOX04e5fH_yHZgGsDGL3JNLDzILR9Ss9MFP6hBGtTxq0xhkf4aL5i5rKV_7nfdFASeMKHsxw4kwthqdxmqbgMgo85oL3RZdLeK1uBA12bwMcl7LKN6jaHzoiO-1XpWsWiK9VkdO8KBHswp9O4M6CMvQHcer9AVpHlsmfxiWIcHk4-ADZKlqFj6qEDBrviQ1G9-_eJAzUh091IZEsT0P2hFInZW7TvYCuCbiWCby-HO3_mCdONFsak4Zm1lmCSzlA73_S8GcKUmek"/>
+</div>
+</body></html>

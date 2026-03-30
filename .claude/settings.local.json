@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"c:\\\\Users\\\\benjo\\\\Desktop\\\\Lector\\\\my-app\\\\app\"\" && echo \"---\" && ls -la \"c:UsersbenjoDesktopLectormy-appprisma\"\")"
+    ]
+  }
+}
