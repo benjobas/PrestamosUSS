@@ -3,6 +3,24 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Kiosk Design System */
+  --color-kiosk-primary: #002045;
+  --color-kiosk-primary-container: #1a365d;
+  --color-kiosk-on-primary: #ffffff;
+  --color-kiosk-on-primary-container: #86a0cd;
+  --color-kiosk-secondary: #13696a;
+  --color-kiosk-on-secondary-container: #1a6d6e;
+  --color-kiosk-surface: #faf9fd;
+  --color-kiosk-surface-container-lowest: #ffffff;
+  --color-kiosk-surface-container-low: #f4f3f7;
+  --color-kiosk-surface-container-highest: #e3e2e6;
+  --color-kiosk-on-surface: #1a1c1e;
+  --color-kiosk-outline-variant: #c4c6cf;
+  --color-kiosk-error: #ba1a1a;
+  --color-kiosk-on-error: #ffffff;
+  --color-kiosk-error-container: #ffdad6;
+  --color-kiosk-on-error-container: #93000a;
 }
 
 @theme inline {
@@ -10,6 +28,29 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Kiosk colors */
+  --color-kprimary: var(--color-kiosk-primary);
+  --color-kprimary-container: var(--color-kiosk-primary-container);
+  --color-kon-primary: var(--color-kiosk-on-primary);
+  --color-kon-primary-container: var(--color-kiosk-on-primary-container);
+  --color-ksecondary: var(--color-kiosk-secondary);
+  --color-kon-secondary-container: var(--color-kiosk-on-secondary-container);
+  --color-ksurface: var(--color-kiosk-surface);
+  --color-ksurface-lowest: var(--color-kiosk-surface-container-lowest);
+  --color-ksurface-low: var(--color-kiosk-surface-container-low);
+  --color-ksurface-highest: var(--color-kiosk-surface-container-highest);
+  --color-kon-surface: var(--color-kiosk-on-surface);
+  --color-koutline-variant: var(--color-kiosk-outline-variant);
+  --color-kerror: var(--color-kiosk-error);
+  --color-kon-error: var(--color-kiosk-on-error);
+  --color-kerror-container: var(--color-kiosk-error-container);
+  --color-kon-error-container: var(--color-kiosk-on-error-container);
+
+  /* Kiosk fonts */
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +64,19 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Kiosk-specific styles */
+.kiosk-scanner-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 32, 69, 0.1);
+}
+
+.kiosk-body::-webkit-scrollbar {
+  display: none;
+}
+
+.kiosk-body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
