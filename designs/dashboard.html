@@ -1,0 +1,56 @@
+Crea la página de dashboard en app/(dashboard)/dashboard/page.tsx. Usa el HTML adjunto como referencia visual. Todo el texto en español.
+
+**Barra de filtros (header de la página):**
+- Título "Dashboard Analítico" y subtítulo "Métricas de rendimiento en tiempo real."
+- A la derecha, un contenedor con:
+  - Selector de sede: solo visible si el usuario es ADMIN. Opciones: "Todas las Sedes" (por defecto) y cada sede activa. Si el usuario es OPERATOR, no se muestra y los datos se filtran automáticamente por su sede.
+  - Selector de rango de fechas: dos inputs tipo date (desde / hasta), con valor por defecto del mes en curso.
+  - Botón "Exportar Reporte" (solo visual por ahora, sin funcionalidad).
+- Al cambiar sede o rango de fechas, todos los datos de la página se recargan.
+
+**KPI Cards (4 columnas):**
+- "Total Préstamos": cantidad total de préstamos en el período. Con variación porcentual respecto al período anterior y flecha de tendencia (verde si sube, rojo si baja).
+- "Préstamos Activos": cantidad de préstamos activos ahora (no filtrados por fecha). Con barra de progreso mostrando % de utilización del inventario.
+- "Vencidos": préstamos activos que llevan más de 2 horas. Fondo error-container como en el boceto. Texto "Requiere atención" abajo.
+- "Usuarios Únicos": cantidad de alumnos distintos que han hecho préstamos en el período. Con variación porcentual.
+
+**Gráficos principales (2 columnas: 2/3 + 1/3):**
+
+- **Préstamos por Día** (2/3 del ancho): Gráfico de barras verticales mostrando la cantidad de préstamos por día en el período seleccionado. Usar barras HTML/CSS con alturas proporcionales (no se necesita librería de charts). Etiquetas de fecha abajo. Tooltip con cantidad al hacer hover en cada barra. La barra del día actual se destaca con color primary sólido, las demás con primary/10.
+
+- **Distribución por Categoría** (1/3 del ancho): Representación visual de la proporción de préstamos por categoría de artículo. Usar barras de progreso con leyenda (como en el boceto), con dot de color, nombre de categoría y porcentaje. No se necesita gráfico de donut real, usar la representación con barras de la sección de inventario.
+
+**Gráficos secundarios (2 columnas iguales):**
+
+- **Préstamos por Franja Horaria**: Barras verticales mostrando la distribución de préstamos por franja horaria: 08-10h, 10-12h, 12-14h, 14-16h, 16-18h. La franja con más préstamos se destaca con color sólido, las demás con opacidad reducida.
+
+- **Comparativa por Sede**: Tabla con columnas: Sede, Volumen (total préstamos), Tasa a Tiempo (% devueltos a tiempo con barra de progreso visual), Tendencia (variación % respecto al período anterior, verde o rojo). Solo visible si el usuario es ADMIN y tiene "Todas las Sedes" seleccionado. Si es operador o tiene una sede específica seleccionada, este panel se reemplaza por las métricas: Tasa de Devolución a Tiempo, Duración Promedio, y Día Más Activo de la sede.
+
+**Rankings (3 columnas):**
+
+- **Artículos Más Prestados**: Top 5 artículos con más préstamos en el período. Cada fila muestra: posición (#1, #2...), nombre del artículo, categoría, cantidad de préstamos.
+
+- **Alumnos con Más Préstamos**: Top 5 alumnos. Cada fila muestra: RUN, nombre (si está registrado), total de préstamos en el período. Sin avatar/imagen, usar iniciales en círculo como en las otras páginas.
+
+- **Devoluciones Tardías**: Top 5 alumnos con mayor tasa de devolución tardía. Cada fila muestra: nombre, badge de riesgo (Alto/Medio según el porcentaje), barra de progreso con el porcentaje de devoluciones tardías, y texto "X tardías de Y total".
+
+**API Route necesaria:**
+
+GET /api/dashboard/metrics — Recibe parámetros: sedeId (opcional, si no viene y es admin devuelve datos globales), dateFrom, dateTo. Devuelve un objeto con todas las métricas necesarias para la página:
+- kpis: { totalLoans, activeLoans, overdueLoans, uniqueUsers, totalLoansPrevious, uniqueUsersPrevious, totalItems }
+- loansByDay: [{ date, count }]
+- loansByCategory: [{ category, count, percentage }]
+- loansByHour: [{ range, count }]
+- campusComparison: [{ sedeId, sedeName, volume, onTimeRate, trend }] (solo si es vista global)
+- sedeMetrics: { onTimeRate, avgDuration, busiestDay } (solo si es vista de una sede)
+- topItems: [{ name, category, count }]
+- topBorrowers: [{ run, name, count }]
+- lateReturners: [{ run, name, lateCount, totalCount, lateRate }]
+
+La API debe calcular el período anterior automáticamente (misma duración, inmediatamente antes) para las variaciones porcentuales.
+
+**Comportamiento:**
+- Client Component.
+- Al cargar, consulta la API con los filtros por defecto (mes actual, sede del usuario o todas).
+- Al cambiar filtros, recarga todos los datos.
+- Los operadores nunca ven el selector de sedes ni la comparativa entre sedes.

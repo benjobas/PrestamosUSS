@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vanguard Admin - Inventory Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffddba",
+              "surface-container-low": "#f4f3f7",
+              "tertiary-fixed-dim": "#f2bc82",
+              "on-surface": "#1a1c1e",
+              "background": "#faf9fd",
+              "surface-container-highest": "#e3e2e6",
+              "surface": "#faf9fd",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#a5eff0",
+              "outline-variant": "#c4c6cf",
+              "on-tertiary-fixed": "#2b1700",
+              "inverse-primary": "#adc7f7",
+              "on-primary-fixed-variant": "#2d476f",
+              "inverse-on-surface": "#f1f0f4",
+              "on-secondary-fixed-variant": "#004f50",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e9e7eb",
+              "error": "#ba1a1a",
+              "surface-bright": "#faf9fd",
+              "tertiary-container": "#4f2e00",
+              "on-secondary-fixed": "#002020",
+              "on-background": "#1a1c1e",
+              "primary-container": "#1a365d",
+              "outline": "#74777f",
+              "primary-fixed": "#d6e3ff",
+              "on-secondary": "#ffffff",
+              "secondary": "#13696a",
+              "on-primary-fixed": "#001b3c",
+              "tertiary": "#321b00",
+              "on-secondary-container": "#1a6d6e",
+              "surface-container": "#efedf1",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#43474e",
+              "surface-tint": "#455f88",
+              "on-tertiary-fixed-variant": "#633f0f",
+              "surface-dim": "#dad9dd",
+              "secondary-container": "#a2eded",
+              "primary": "#002045",
+              "on-primary-container": "#86a0cd",
+              "on-tertiary-container": "#c6955e",
+              "surface-variant": "#e3e2e6",
+              "inverse-surface": "#2f3033",
+              "primary-fixed-dim": "#adc7f7",
+              "secondary-fixed-dim": "#89d3d4",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar (from JSON) -->
+<aside class="flex flex-col h-screen w-64 docked left-0 border-r-0 bg-[#f4f3f7] dark:bg-slate-900 shadow-[inset_-1px_0_0_0_rgba(0,0,0,0.05)] py-6 fixed z-50">
+<div class="px-6">
+<div class="text-lg font-black tracking-tighter text-[#002045] dark:text-white mb-8">Vanguard Admin</div>
+<div class="flex items-center gap-3 mb-8">
+<img alt="Admin User Profile" class="w-10 h-10 rounded-full bg-surface-container-highest" data-alt="professional portrait of a logistics manager in a clean modern office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRLOkJUaM0d-pZ57K_2XskPWlykwQtmHLNeyqv91q6aAjeFrsXwPgI7asW0a8AssyyUsMYA7p-_9IaxGxggit3fu-nVxzIUTmCAXWz9XntmZ1LqDIupU3e54yR3vKDLuzOSyHS6ocV5PdL1Q2FGjlZRqggEk6iyvAZzz74qZrwD1P4J52-K-iKXYlAC4Paj_R9nLtRMYHsnUn2jv1JMtr99OEtnibMrZiZ2qzWPyJL5Ss2MX8xeOG5hpBRhiVWbbsTDsinhzEc3V0"/>
+<div class="flex flex-col">
+<span class="text-[13px] font-bold text-primary dark:text-white leading-tight">Admin User</span>
+<span class="text-[11px] font-['Manrope'] font-semibold tracking-tight uppercase text-slate-500">Precision Logistics</span>
+</div>
+</div>
+<button class="w-full mb-6 bg-primary text-on-primary py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>New Entry</span>
+</button>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<!-- Inventory is active -->
+<a class="flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-800 text-[#002045] dark:text-white font-bold rounded-l-xl ml-4 shadow-sm font-['Manrope'] tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                Inventory
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined">credit_score</span>
+                Active Loans
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined">history</span>
+                History
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined">settings</span>
+                System Settings
+            </a>
+</nav>
+<div class="mt-auto pt-6 px-6 space-y-1">
+<a class="flex items-center gap-3 py-2 text-slate-500 hover:text-primary transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 py-2 text-error hover:opacity-80 transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar (from JSON) -->
+<header class="flex justify-between items-center px-8 h-20 w-full docked top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-extrabold tracking-tighter text-[#002045] dark:text-blue-100">Vanguard Loan Management</span>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002045] font-['Manrope'] font-bold text-sm tracking-wide transition-colors" href="#">Kiosk Mode</a>
+<a class="text-[#13696a] dark:text-teal-400 border-b-2 border-[#13696a] pb-1 font-['Manrope'] font-bold text-sm tracking-wide" href="#">Admin Desk</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002045] font-['Manrope'] font-bold text-sm tracking-wide transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">search</span>
+<input class="bg-surface-container-highest border-none rounded-full pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary transition-all" placeholder="Search logistics..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-primary">
+<button class="material-symbols-outlined opacity-80 hover:opacity-100 duration-300">notifications</button>
+<button class="material-symbols-outlined opacity-80 hover:opacity-100 duration-300">apps</button>
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95">Seat Selection</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
+<img alt="Administrator Avatar" class="w-full h-full object-cover" data-alt="close up headshot of a professional administrator with neutral expression and high-end lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4zYp14kyeW8xBGlOb2ZHzjkBOTODMdR9Xt0qzVIDM02bsKR3fz_695SVZa083aphLPXtVjfy2eY57sHW5p9yJNF8bcxKWcIkgwVG3L-1E0KJi0CvPIAZhQVwjWduovS1EhjcyXGG7Vh29GROVNy7lx2eNcJWf816HAGMNLrOSwNHCvT9NUp4evn7BWzZivvGdqFchgut-sqHDEK_uMfAJiVS2Tam14bPDm82X1mSMpVQ76N5p7mzRjYbJvu3Z_HRQOdfXKwddkf4"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<section class="p-8 space-y-8 max-w-7xl mx-auto w-full">
+<!-- Breadcrumbs & Page Action -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-black text-primary tracking-tight font-headline">Inventory Management</h2>
+<p class="text-slate-500 font-body text-sm mt-1">Real-time status of logistical assets and hardware.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-high text-on-secondary-container rounded-xl font-bold text-sm hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">category</span>
+                        Gestionar Categorías
+                    </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+                        Agregar Artículo
+                    </button>
+</div>
+</div>
+<!-- Dashboard Stats / Filters -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-primary/10">
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-label">Total Assets</div>
+<div class="text-3xl font-black text-primary">1,284</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-secondary/10">
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-label">Available</div>
+<div class="text-3xl font-black text-secondary">842</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-on-tertiary-container/10">
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-label">Borrowed</div>
+<div class="text-3xl font-black text-on-tertiary-container">402</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-error/10">
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-label">Maintenance</div>
+<div class="text-3xl font-black text-error">40</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap gap-4 items-center bg-surface-container-low p-2 rounded-full px-6">
+<span class="text-xs font-bold text-slate-500 uppercase font-label">Filter By:</span>
+<button class="bg-white px-4 py-1.5 rounded-full text-xs font-bold text-primary shadow-sm border border-slate-100">All Items</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-200 transition-colors">Computing</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-200 transition-colors">Safety Gear</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-200 transition-colors">Scanners</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-200 transition-colors">Drones</button>
+<div class="ml-auto flex gap-2">
+<button class="p-2 text-slate-400 hover:text-primary"><span class="material-symbols-outlined text-[20px]">sort</span></button>
+<button class="p-2 text-slate-400 hover:text-primary"><span class="material-symbols-outlined text-[20px]">filter_list</span></button>
+</div>
+</div>
+<!-- Inventory List (Table) -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 font-label">Code</th>
+<th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 font-label">Name &amp; Description</th>
+<th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 font-label">Category</th>
+<th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 font-label">Status</th>
+<th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 font-label text-center">Service Toggle</th>
+<th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-slate-400 font-label text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs font-bold text-primary">VG-2045-SCN</td>
+<td class="px-6 py-4">
+<div class="font-bold text-sm text-on-surface">Precision Laser Scanner X1</div>
+<div class="text-[11px] text-slate-500">Handheld 3D scanner for high-fidelity inventory mapping.</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-high text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase">Hardware</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-xs font-bold text-secondary">Available</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-primary hover:text-white transition-all" title="Generate QR"><span class="material-symbols-outlined text-[18px]">qr_code_2</span></button>
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-secondary hover:text-white transition-all" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs font-bold text-primary">VG-9921-MBP</td>
+<td class="px-6 py-4">
+<div class="font-bold text-sm text-on-surface">MacBook Pro 14" (M3)</div>
+<div class="text-[11px] text-slate-500">Logistics node controller for site management.</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-high text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase">Computing</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="text-xs font-bold text-on-tertiary-container">Borrowed</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-primary hover:text-white transition-all" title="Generate QR"><span class="material-symbols-outlined text-[18px]">qr_code_2</span></button>
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-secondary hover:text-white transition-all" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Out of Service) -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group bg-error-container/5">
+<td class="px-6 py-4 font-mono text-xs font-bold text-primary">VG-0012-DRN</td>
+<td class="px-6 py-4">
+<div class="font-bold text-sm text-on-surface">Delivery Drone MK.IV</div>
+<div class="text-[11px] text-slate-500">Autonomous delivery unit - Propeller malfunction.</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-high text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase">Aerial</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-xs font-bold text-error">Out of Service</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-primary hover:text-white transition-all" title="Generate QR"><span class="material-symbols-outlined text-[18px]">qr_code_2</span></button>
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-secondary hover:text-white transition-all" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs font-bold text-primary">VG-4552-WKT</td>
+<td class="px-6 py-4">
+<div class="font-bold text-sm text-on-surface">Smart Walkie-Talkie Set</div>
+<div class="text-[11px] text-slate-500">Mesh network communication device.</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-surface-container-high text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase">Communication</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-xs font-bold text-secondary">Available</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-primary hover:text-white transition-all" title="Generate QR"><span class="material-symbols-outlined text-[18px]">qr_code_2</span></button>
+<button class="p-2 bg-surface-container-high text-primary rounded-lg hover:bg-secondary hover:text-white transition-all" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="p-4 bg-surface-container-low text-center">
+<button class="text-xs font-bold text-primary hover:underline">Load More Records</button>
+</div>
+</div>
+<!-- Bottom Layout: Bento Grid Detail Panels (Secondary Content) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- QR Preview Card (Contextual) -->
+<div class="lg:col-span-1 bg-white p-6 rounded-xl border border-slate-100 shadow-xl flex flex-col items-center justify-center text-center">
+<h3 class="text-sm font-black text-primary uppercase tracking-tighter mb-4 font-headline">Label Preview</h3>
+<div class="p-4 border-4 border-primary rounded-xl mb-4">
+<div class="w-32 h-32 bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-[100px] text-primary">qr_code_2</span>
+</div>
+</div>
+<div class="font-mono text-lg font-bold text-primary mb-1">VG-2045-SCN</div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Property of Vanguard Admin</p>
+<button class="mt-6 w-full flex items-center justify-center gap-2 bg-surface-container-highest text-primary py-2 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                        Print Label
+                    </button>
+</div>
+<!-- Category Breakdown Card -->
+<div class="lg:col-span-2 bg-surface-container-low p-6 rounded-xl">
+<div class="flex justify-between items-start mb-6">
+<h3 class="text-sm font-black text-primary uppercase tracking-tighter font-headline">Inventory Distribution</h3>
+<span class="text-[10px] font-bold text-slate-400">UPDATED 2 MINS AGO</span>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span>Computing</span>
+<span>45%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 45%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span>Precision Hardware</span>
+<span>30%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 30%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold">
+<span>Safety Logistics</span>
+<span>25%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-container" style="width: 25%"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-200 grid grid-cols-2 gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+<div>
+<div class="text-[10px] font-bold text-slate-400">Growth</div>
+<div class="text-sm font-black">+12.4%</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">inventory</span>
+<div>
+<div class="text-[10px] font-bold text-slate-400">Utilization</div>
+<div class="text-sm font-black">94.2%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Modal Mockup (Add Article Form) - Hidden state represented via opacity/position logic in typical UI, here shown as fixed overlay if triggered -->
+<div class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 pointer-events-none opacity-0 transition-opacity">
+<div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 pointer-events-auto">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-black text-primary tracking-tight">Agregar Artículo</h2>
+<button class="material-symbols-outlined text-slate-400 hover:text-error transition-colors">close</button>
+</div>
+<form class="space-y-6">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-label">Nombre del Artículo</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary" placeholder="e.g. Scanner Industrial X-Ray" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-label">Categoría</label>
+<select class="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary text-sm font-medium">
+<option>Hardware</option>
+<option>Computing</option>
+<option>Safety</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-label">Código Interno</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary" placeholder="VG-0000-ABC" type="text"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-label">Descripción</label>
+<textarea class="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary" placeholder="Detalles técnicos y uso..." rows="3"></textarea>
+</div>
+<div class="pt-4 flex gap-3">
+<button class="flex-1 px-6 py-3 bg-surface-container-high text-primary rounded-xl font-bold text-sm" type="button">Cancelar</button>
+<button class="flex-1 px-6 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm shadow-lg" type="submit">Guardar Artículo</button>
+</div>
+</form>
+</div>
+</div>
+</body></html>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { FilterSelect } from "@/components/ui/filter-select";
 
 interface LoanItem {
   id: string;
@@ -98,6 +99,14 @@ export default function PrestamosPage() {
     const interval = setInterval(() => setNow(Date.now()), DURATION_TICK);
     return () => clearInterval(interval);
   }, []);
+
+  const categoryOptions = useMemo(
+    () => [
+      { value: "", label: "Todas las categorías", icon: "category" },
+      ...categories.map((cat) => ({ value: cat, label: cat, icon: "inventory_2" })),
+    ],
+    [categories]
+  );
 
   // Client-side search filter
   const filteredLoans = useMemo(() => {
@@ -232,25 +241,13 @@ export default function PrestamosPage() {
             />
           </div>
           <div className="flex gap-2">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-vgon-surface-variant text-[18px] pointer-events-none">
-                filter_list
-              </span>
-              <select
-                value={category}
-                onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-                className="appearance-none pl-10 pr-10 py-3 bg-vgsurface-highest text-vgon-surface font-bold text-sm rounded-full hover:bg-vgsurface-container-high transition-colors cursor-pointer border-none focus:ring-2 focus:ring-vgsecondary/50"
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
-                <option value="">Todas las categorías</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-vgon-surface-variant text-[18px] pointer-events-none">
-                expand_more
-              </span>
-            </div>
+            <FilterSelect
+              value={category}
+              onChange={(val) => { setCategory(val); setPage(1); }}
+              variant="pill"
+              placeholder="Todas las categorías"
+              options={categoryOptions}
+            />
             <button
               onClick={handleExport}
               disabled={exporting || total === 0}

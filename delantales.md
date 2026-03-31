@@ -1,0 +1,1 @@
+Cada dos semanas se lavan los delantales. Revisar en stock, gestionar dependencia.

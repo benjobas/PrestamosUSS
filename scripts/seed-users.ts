@@ -2,6 +2,26 @@ import "dotenv/config";
 import { prisma } from "../lib/db";
 import bcrypt from "bcryptjs";
 
+type ItemStatus = "AVAILABLE" | "OUT_OF_SERVICE";
+
+function items(
+  name: string,
+  prefix: string,
+  categoryId: string,
+  sedeId: string,
+  count: number,
+  status: ItemStatus = "AVAILABLE",
+  startAt = 1
+) {
+  return Array.from({ length: count }, (_, i) => ({
+    name,
+    internalCode: `${prefix}-${String(startAt + i).padStart(3, "0")}`,
+    categoryId,
+    sedeId,
+    status,
+  }));
+}
+
 async function main() {
   // --- Clean slate (order matters for FK constraints) ---
   console.log("Limpiando datos anteriores...");
@@ -64,9 +84,9 @@ async function main() {
   });
   console.log("  - operador → Bellavista");
 
-  // --- Categories (for Bellavista) ---
+  // --- Categories (Bellavista) ---
   console.log("\nCreando categorías (Bellavista)...");
-  const categoryNames = ["Juegos de Mesa", "Calculadoras", "Bata Clínica"];
+  const categoryNames = ["Uso Académico", "Juegos", "Extras"];
   await prisma.category.createMany({
     data: categoryNames.map((name) => ({ name, sedeId: sedeBellavista.id })),
   });
@@ -76,47 +96,63 @@ async function main() {
   });
   categories.forEach((c) => console.log(`  - ${c.name}`));
 
-  const catJuegos = categories.find((c) => c.name === "Juegos de Mesa")!;
-  const catCalc = categories.find((c) => c.name === "Calculadoras")!;
-  const catBata = categories.find((c) => c.name === "Bata Clínica")!;
+  const catAcademico = categories.find((c) => c.name === "Uso Académico")!;
+  const catJuegos = categories.find((c) => c.name === "Juegos")!;
+  const catExtras = categories.find((c) => c.name === "Extras")!;
 
-  // --- Items ---
+  // --- Items (Bellavista) ---
   console.log("\nCreando artículos (Bellavista)...");
-  const itemsData = [
-    // Juegos de Mesa
-    { internalCode: "JDM-001", name: "Monopoly", categoryId: catJuegos.id },
-    { internalCode: "JDM-002", name: "Catán", categoryId: catJuegos.id },
-    { internalCode: "JDM-003", name: "Uno", categoryId: catJuegos.id },
-    { internalCode: "JDM-004", name: "Jenga", categoryId: catJuegos.id },
-    { internalCode: "JDM-005", name: "Risk", categoryId: catJuegos.id },
-    { internalCode: "JDM-006", name: "Ajedrez", categoryId: catJuegos.id },
-    // Calculadoras
-    { internalCode: "CALC-001", name: "Casio fx-991ES", categoryId: catCalc.id },
-    { internalCode: "CALC-002", name: "Casio fx-991ES", categoryId: catCalc.id },
-    { internalCode: "CALC-003", name: "Casio fx-82LA", categoryId: catCalc.id },
-    { internalCode: "CALC-004", name: "Casio fx-82LA", categoryId: catCalc.id },
-    { internalCode: "CALC-005", name: "HP 50g", categoryId: catCalc.id },
-    // Bata Clínica
-    { internalCode: "BATA-001", name: "Bata Clínica Talla S", categoryId: catBata.id },
-    { internalCode: "BATA-002", name: "Bata Clínica Talla M", categoryId: catBata.id },
-    { internalCode: "BATA-003", name: "Bata Clínica Talla M", categoryId: catBata.id },
-    { internalCode: "BATA-004", name: "Bata Clínica Talla L", categoryId: catBata.id },
-    { internalCode: "BATA-005", name: "Bata Clínica Talla L", categoryId: catBata.id },
-    { internalCode: "BATA-006", name: "Bata Clínica Talla XL", categoryId: catBata.id },
+  const sid = sedeBellavista.id;
+
+  const allItems = [
+    // ── Uso Académico ──
+    ...items("Calculadora", "CALC", catAcademico.id, sid, 18),
+    ...items("Delantal Blanco", "DELA", catAcademico.id, sid, 13),
+
+    // ── Juegos ──
+    ...items("Basta", "BAST", catJuegos.id, sid, 1),
+    ...items("Clue", "CLUE", catJuegos.id, sid, 1),
+    ...items("Ajedrez", "AJED", catJuegos.id, sid, 2),
+    ...items("Monopoly", "MONO", catJuegos.id, sid, 1),                              // MONO-001 AVAILABLE
+    ...items("Monopoly", "MONO", catJuegos.id, sid, 1, "OUT_OF_SERVICE", 2),         // MONO-002 malo
+    ...items("Gran Santiago", "GRAN", catJuegos.id, sid, 1),
+    ...items("Battleship", "BATT", catJuegos.id, sid, 1),
+    ...items("Pictureka", "PICT", catJuegos.id, sid, 1),
+    ...items("Dixit", "DIXI", catJuegos.id, sid, 2, "OUT_OF_SERVICE"),               // incompletos
+    ...items("Catán", "CATA", catJuegos.id, sid, 3),
+    ...items("Preguntados", "PREG", catJuegos.id, sid, 1),
+    ...items("Finan City", "FINA", catJuegos.id, sid, 1),
+    ...items("Plakkas", "PLAK", catJuegos.id, sid, 1),
+    ...items("Scrabble", "SCRA", catJuegos.id, sid, 1),
+    ...items("Cartas Inglesas", "CAIN", catJuegos.id, sid, 1),
+    ...items("Uno", "UNO", catJuegos.id, sid, 1),
+    ...items("Cartas Españolas", "CAES", catJuegos.id, sid, 2),
+    ...items("Jenga", "JENG", catJuegos.id, sid, 1, "OUT_OF_SERVICE"),               // incompleto
+    ...items("Dominó", "DOMI", catJuegos.id, sid, 2, "OUT_OF_SERVICE"),              // incompletos
+    ...items("Dobble", "DOBB", catJuegos.id, sid, 2),
+    ...items("Bingo", "BING", catJuegos.id, sid, 1),
+
+    // ── Extras ──
+    ...items("Paleta Ping-Pong", "PALP", catExtras.id, sid, 6, "OUT_OF_SERVICE"),    // mal estado
+    ...items("Pelota Ping-Pong", "PELP", catExtras.id, sid, 3),
+    ...items("Pelota Tacataca", "PELT", catExtras.id, sid, 1),
+    ...items("Cargador iPhone", "CARI", catExtras.id, sid, 1),
+    ...items("Guitarra", "GUIT", catExtras.id, sid, 2, "OUT_OF_SERVICE"),            // deterioradas
+    ...items("Balón Basquetbol", "BALB", catExtras.id, sid, 3),
+    ...items("Mito y Leyendas", "MITO", catExtras.id, sid, 8),
+    ...items("Mazo Club Pingüin", "MAZC", catExtras.id, sid, 1),
+    ...items("Puzzle", "PUZZ", catExtras.id, sid, 3),
+    ...items("Cubo Rubik", "CUBO", catExtras.id, sid, 1),
   ];
 
-  await prisma.item.createMany({
-    data: itemsData.map((item) => ({
-      ...item,
-      sedeId: sedeBellavista.id,
-      status: "AVAILABLE",
-    })),
-  });
-  const items = await prisma.item.findMany({
-    where: { sedeId: sedeBellavista.id },
+  await prisma.item.createMany({ data: allItems });
+
+  const createdItems = await prisma.item.findMany({
+    where: { sedeId: sid },
     orderBy: { internalCode: "asc" },
   });
-  console.log(`  ${items.length} artículos creados`);
+  const oosCount = createdItems.filter((i) => i.status === "OUT_OF_SERVICE").length;
+  console.log(`  ${createdItems.length} artículos creados (${oosCount} fuera de servicio)`);
 
   // --- Students ---
   console.log("\nCreando estudiantes...");
@@ -142,44 +178,47 @@ async function main() {
 
   const loansData = [
     // Normal loans
-    { studentRun: "18.452.123-K", itemCode: "JDM-001", loanDate: minutesAgo(45) },
+    { studentRun: "18.452.123-K", itemCode: "MONO-001", loanDate: minutesAgo(45) },
     { studentRun: "17.899.403-1", itemCode: "CALC-003", loanDate: minutesAgo(20) },
-    { studentRun: "19.876.321-0", itemCode: "BATA-002", loanDate: minutesAgo(90) },
-    { studentRun: "20.112.445-3", itemCode: "JDM-004", loanDate: minutesAgo(10) },
+    { studentRun: "19.876.321-0", itemCode: "DELA-002", loanDate: minutesAgo(90) },
+    { studentRun: "20.112.445-3", itemCode: "AJED-001", loanDate: minutesAgo(10) },
     { studentRun: "18.334.667-2", itemCode: "CALC-001", loanDate: minutesAgo(55) },
     // Overdue loans (+2h)
-    { studentRun: "19.221.874-5", itemCode: "BATA-004", loanDate: hoursAgo(3.5) },
-    { studentRun: "20.041.552-8", itemCode: "JDM-002", loanDate: hoursAgo(2.7) },
-    { studentRun: "21.005.789-K", itemCode: "CALC-005", loanDate: hoursAgo(4) },
+    { studentRun: "19.221.874-5", itemCode: "DELA-005", loanDate: hoursAgo(3.5) },
+    { studentRun: "20.041.552-8", itemCode: "CATA-001", loanDate: hoursAgo(2.7) },
+    { studentRun: "21.005.789-K", itemCode: "CALC-010", loanDate: hoursAgo(4) },
   ];
 
   for (const loan of loansData) {
     const student = students.find((s) => s.run === loan.studentRun)!;
-    const item = items.find((i) => i.internalCode === loan.itemCode)!;
+    const item = createdItems.find((i) => i.internalCode === loan.itemCode)!;
 
     await prisma.loan.create({
       data: {
         studentId: student.id,
         itemId: item.id,
-        sedeId: sedeBellavista.id,
+        sedeId: sid,
         loanDate: loan.loanDate,
       },
     });
 
-    // Mark item as loaned
     await prisma.item.update({
       where: { id: item.id },
       data: { status: "LOANED" },
     });
   }
-  console.log(`  ${loansData.length} préstamos activos (${loansData.filter((l) => now.getTime() - l.loanDate.getTime() > 2 * 60 * 60 * 1000).length} vencidos)`);
+  const overdueCount = loansData.filter(
+    (l) => now.getTime() - l.loanDate.getTime() > 2 * 60 * 60 * 1000
+  ).length;
+  console.log(`  ${loansData.length} préstamos activos (${overdueCount} vencidos)`);
 
   // --- Summary ---
+  const totalItems = createdItems.length;
   console.log("\n========================================");
   console.log("Seed completado:");
   console.log("  Sedes:       ", sedes.length);
   console.log("  Categorías:  ", categories.length);
-  console.log("  Artículos:   ", items.length);
+  console.log(`  Artículos:    ${totalItems} (${totalItems - oosCount} disponibles, ${oosCount} fuera de servicio)`);
   console.log("  Estudiantes: ", students.length);
   console.log("  Préstamos:   ", loansData.length);
   console.log("\n--- Credenciales ---");

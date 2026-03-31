@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vanguard Loan Management - History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffddba",
+              "surface-container-low": "#f4f3f7",
+              "tertiary-fixed-dim": "#f2bc82",
+              "on-surface": "#1a1c1e",
+              "background": "#faf9fd",
+              "surface-container-highest": "#e3e2e6",
+              "surface": "#faf9fd",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#a5eff0",
+              "outline-variant": "#c4c6cf",
+              "on-tertiary-fixed": "#2b1700",
+              "inverse-primary": "#adc7f7",
+              "on-primary-fixed-variant": "#2d476f",
+              "inverse-on-surface": "#f1f0f4",
+              "on-secondary-fixed-variant": "#004f50",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e9e7eb",
+              "error": "#ba1a1a",
+              "surface-bright": "#faf9fd",
+              "tertiary-container": "#4f2e00",
+              "on-secondary-fixed": "#002020",
+              "on-background": "#1a1c1e",
+              "primary-container": "#1a365d",
+              "outline": "#74777f",
+              "primary-fixed": "#d6e3ff",
+              "on-secondary": "#ffffff",
+              "secondary": "#13696a",
+              "on-primary-fixed": "#001b3c",
+              "tertiary": "#321b00",
+              "on-secondary-container": "#1a6d6e",
+              "surface-container": "#efedf1",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#43474e",
+              "surface-tint": "#455f88",
+              "on-tertiary-fixed-variant": "#633f0f",
+              "surface-dim": "#dad9dd",
+              "secondary-container": "#a2eded",
+              "primary": "#002045",
+              "on-primary-container": "#86a0cd",
+              "on-tertiary-container": "#c6955e",
+              "surface-variant": "#e3e2e6",
+              "inverse-surface": "#2f3033",
+              "primary-fixed-dim": "#adc7f7",
+              "secondary-fixed-dim": "#89d3d4",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full py-6 bg-[#f4f3f7] dark:bg-slate-900 shadow-[inset_-1px_0_0_0_rgba(0,0,0,0.05)] h-screen w-64 docked left-0 border-r-0 shrink-0">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-black tracking-tighter text-[#002045] dark:text-white mb-1">Vanguard Admin</h1>
+<p class="font-['Manrope'] font-semibold tracking-tight uppercase text-[11px] text-slate-500">Precision Logistics</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px] hover:bg-[#e3e2e6] dark:hover:bg-slate-800 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px] hover:bg-[#e3e2e6] dark:hover:bg-slate-800 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">inventory_2</span>
+                Inventory
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px] hover:bg-[#e3e2e6] dark:hover:bg-slate-800 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">credit_score</span>
+                Active Loans
+            </a>
+<a class="flex items-center px-6 py-3 bg-white dark:bg-slate-800 text-[#002045] dark:text-white font-bold rounded-l-xl ml-4 shadow-sm font-['Manrope'] tracking-tight uppercase text-[11px]" href="#">
+<span class="material-symbols-outlined mr-3">history</span>
+                History
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-500 dark:text-slate-400 hover:text-[#002045] transition-colors font-['Manrope'] font-semibold tracking-tight uppercase text-[11px] hover:bg-[#e3e2e6] dark:hover:bg-slate-800 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+                System Settings
+            </a>
+</nav>
+<div class="px-4 mt-auto space-y-2">
+<button class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+                New Entry
+            </button>
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+<a class="flex items-center px-2 py-2 text-slate-500 hover:text-[#002045] text-[11px] font-bold uppercase tracking-tight" href="#">
+<span class="material-symbols-outlined mr-3">help</span>
+                    Support
+                </a>
+<a class="flex items-center px-2 py-2 text-slate-500 hover:text-error text-[11px] font-bold uppercase tracking-tight" href="#">
+<span class="material-symbols-outlined mr-3">logout</span>
+                    Logout
+                </a>
+</div>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-8 h-20 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md docked top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-extrabold tracking-tighter text-[#002045] dark:text-blue-100">Vanguard Loan Management</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002045] font-['Manrope'] font-bold text-sm tracking-wide transition-colors" href="#">Kiosk Mode</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002045] font-['Manrope'] font-bold text-sm tracking-wide transition-colors" href="#">Admin Desk</a>
+<a class="text-[#13696a] dark:text-teal-400 border-b-2 border-[#13696a] pb-1 font-['Manrope'] font-bold text-sm tracking-wide" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-highest border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+</div>
+<button class="p-2 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="portrait of a professional administrator in a clean modern office setting with neutral lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEb6A-1uLVCvOddKPtPlEd4CB1W4A-UgyKcpO4V7pHVGDXkcAE-_O_sPMEUTLuXFUwhMmQTMF4wZB_VpImKttEVRDjXLT6iSJc9OtCebDDY3r90Q0qHsT-w_PakT9W9D__MzpTXIJ9ttwCgVITbGVUjb7B4fnPFiuGMAYH_BkSaW_NNXIwJrxUoPNUsulyD0WrY79cLLRzBgrl4fyxSQ95detwyu-quSwFvjpt1yXS4frwFXn1c9Zu4D86HXhvLzaLFJQRhNEAtBU"/>
+<div class="hidden xl:block">
+<p class="text-xs font-bold text-primary">Alex Vanguard</p>
+<p class="text-[10px] text-slate-500">System Admin</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto p-8 space-y-8">
+<!-- Header Section -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-extrabold text-primary tracking-tight">Loan History</h2>
+<p class="text-on-surface-variant font-medium mt-1">Review and manage past equipment transactions.</p>
+</div>
+<button class="bg-surface-container-lowest text-primary font-bold px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-surface-container-high transition-all shadow-sm border border-outline-variant/10">
+<span class="material-symbols-outlined">download</span>
+                    Exportar a CSV/Excel
+                </button>
+</div>
+<!-- Asymmetric Bento Filter Bar -->
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-12 lg:col-span-4 bg-surface-container-low p-6 rounded-full flex items-center gap-4">
+<div class="bg-white p-2 rounded-xl text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Date Range</p>
+<input class="bg-transparent border-none p-0 text-sm font-semibold text-primary focus:ring-0 w-full" type="text" value="Oct 01, 2023 - Oct 31, 2023"/>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 bg-surface-container-low p-6 rounded-full flex items-center gap-4">
+<div class="bg-white p-2 rounded-xl text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">filter_list</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Status Filter</p>
+<select class="bg-transparent border-none p-0 text-sm font-semibold text-primary focus:ring-0 w-full appearance-none">
+<option>All Statuses</option>
+<option>Returned on time</option>
+<option>Overdue</option>
+<option>Active</option>
+</select>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 bg-surface-container-low p-6 rounded-full flex items-center gap-4">
+<div class="bg-white p-2 rounded-xl text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">search</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Search Identifier</p>
+<input class="bg-transparent border-none p-0 text-sm font-semibold text-primary focus:ring-0 w-full" placeholder="Search by RUN or Article..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Precision Data Table -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(26,28,30,0.04)]">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50">
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">RUN</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Student Name</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Article</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Borrowed</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Returned</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Duration</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Status</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-primary">19.234.567-8</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">MA</div>
+<span class="text-sm font-semibold text-on-surface">Marco Aguilera</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary">laptop_mac</span>
+<span class="text-sm text-on-surface">MacBook Pro M2 #042</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">24 Oct, 09:15</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">24 Oct, 17:40</td>
+<td class="px-6 py-4 text-sm font-medium text-primary">8h 25m</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                    A Tiempo
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-2 hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-primary">18.456.789-K</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">SV</div>
+<span class="text-sm font-semibold text-on-surface">Sofía Valdés</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary">camera_enhance</span>
+<span class="text-sm text-on-surface">Sony Alpha A7 IV</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">23 Oct, 10:30</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">25 Oct, 09:00</td>
+<td class="px-6 py-4 text-sm font-medium text-primary">46h 30m</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                    Tardía
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-2 hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-primary">20.112.334-5</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-xs">JT</div>
+<span class="text-sm font-semibold text-on-surface">Javier Torres</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary">tablet_android</span>
+<span class="text-sm text-on-surface">iPad Pro 12.9"</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">22 Oct, 14:00</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">22 Oct, 18:00</td>
+<td class="px-6 py-4 text-sm font-medium text-primary">4h 00m</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                    A Tiempo
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-2 hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 text-sm font-medium text-primary">19.998.765-4</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed-dim text-on-secondary-fixed-variant flex items-center justify-center font-bold text-xs">CL</div>
+<span class="text-sm font-semibold text-on-surface">Catalina Lopez</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary">headset</span>
+<span class="text-sm text-on-surface">Bose QuietComfort</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">21 Oct, 11:20</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">21 Oct, 16:50</td>
+<td class="px-6 py-4 text-sm font-medium text-primary">5h 30m</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                    A Tiempo
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-2 hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Shell -->
+<div class="p-6 bg-surface-container-lowest border-t border-surface-container-low flex justify-between items-center">
+<p class="text-xs font-medium text-on-surface-variant">Showing 1 to 4 of 1,280 entries</p>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant/30 rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-primary text-white rounded-lg text-xs font-bold">1</button>
+<button class="px-3 py-1 hover:bg-surface-container-low rounded-lg text-xs font-bold text-on-surface-variant">2</button>
+<button class="px-3 py-1 hover:bg-surface-container-low rounded-lg text-xs font-bold text-on-surface-variant">3</button>
+<span class="px-2 self-center text-xs text-on-surface-variant">...</span>
+<button class="px-3 py-1 hover:bg-surface-container-low rounded-lg text-xs font-bold text-on-surface-variant">48</button>
+<button class="p-2 border border-outline-variant/30 rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Insights Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8">
+<div class="p-6 bg-white rounded-2xl border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">On-Time Return Rate</span>
+<span class="text-green-600 bg-green-50 px-2 py-0.5 rounded-full text-[10px] font-bold">+2.4%</span>
+</div>
+<p class="text-3xl font-black text-primary">94.2%</p>
+<div class="mt-4 h-1.5 bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 94%"></div>
+</div>
+</div>
+<div class="p-6 bg-white rounded-2xl border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Average Loan Duration</span>
+<span class="text-on-surface-variant text-[10px] font-bold">This Month</span>
+</div>
+<p class="text-3xl font-black text-primary">5.2h</p>
+<p class="mt-2 text-[11px] text-on-surface-variant font-medium">Stable compared to previous period</p>
+</div>
+<div class="p-6 bg-white rounded-2xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Active System Load</p>
+<p class="text-3xl font-black text-primary">High Efficiency</p>
+<p class="mt-2 text-[11px] text-secondary font-bold">428 Transactions/Day</p>
+</div>
+<div class="absolute right-[-20px] bottom-[-20px] opacity-10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-9xl">insights</span>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
