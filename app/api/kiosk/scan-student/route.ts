@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/db";
+import { kioskLimiter, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  const { success, reset } = await kioskLimiter.limit(ip);
+  if (!success) return rateLimitResponse(reset);
+
   try {
     const body = await request.json();
     const { run } = body;

@@ -143,6 +143,17 @@ export default function InventarioPage() {
     fetchDistribution();
   }, [fetchCategories, fetchDistribution]);
 
+  // Re-fetch when admin switches sede
+  useEffect(() => {
+    const handler = () => {
+      fetchItems(page, filterCategoryId, filterStatus);
+      fetchCategories();
+      fetchDistribution();
+    };
+    window.addEventListener("sede-changed", handler);
+    return () => window.removeEventListener("sede-changed", handler);
+  }, [fetchItems, fetchCategories, fetchDistribution, page, filterCategoryId, filterStatus]);
+
   /* ─── Handlers ─── */
 
   function refreshAll() {

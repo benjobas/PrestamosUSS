@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -13,8 +13,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
@@ -25,16 +25,17 @@ export async function PUT(
     return Response.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
 
-  const item = await prisma.item.findFirst({
-    where: { id, sedeId: session.user.sedeId },
-  });
+  // Admin can edit items from any sede; operator only their own
+  const itemWhere = ctx.isGlobalView ? { id } : { id, sedeId: ctx.sedeId! };
+  const item = await prisma.item.findFirst({ where: itemWhere });
   if (!item) {
     return Response.json({ error: "Artículo no encontrado" }, { status: 404 });
   }
 
   if (parsed.data.categoryId) {
+    // Category must belong to the item's sede
     const category = await prisma.category.findFirst({
-      where: { id: parsed.data.categoryId, sedeId: session.user.sedeId },
+      where: { id: parsed.data.categoryId, sedeId: item.sedeId },
     });
     if (!category) {
       return Response.json({ error: "Categoría no encontrada" }, { status: 404 });

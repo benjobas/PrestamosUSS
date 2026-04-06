@@ -1,16 +1,16 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const sedeId = session.user.sedeId;
+  const sedeFilter = ctx.sedeId ? { sedeId: ctx.sedeId } : {};
 
   const categories = await prisma.category.findMany({
-    where: { sedeId },
+    where: sedeFilter,
     include: {
       _count: { select: { items: true } },
     },

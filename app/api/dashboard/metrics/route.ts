@@ -1,30 +1,21 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
 export async function GET(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const { role, sedeId: userSedeId } = session.user;
+  const { user, sedeId, isGlobalView } = ctx;
+  const role = user.role;
   const { searchParams } = request.nextUrl;
 
   const dateFrom = searchParams.get("dateFrom") || "";
   const dateTo = searchParams.get("dateTo") || "";
-  const paramSedeId = searchParams.get("sedeId") || "";
-
-  // Operators can only see their own sede
-  const sedeId = role === "ADMIN" && paramSedeId ? paramSedeId : userSedeId;
-  const isGlobalView = role === "ADMIN" && !paramSedeId;
-
-  // Operators must have a sedeId
-  if (role === "OPERATOR" && !userSedeId) {
-    return Response.json({ error: "No autorizado" }, { status: 401 });
-  }
 
   // Date range
   const fromDate = dateFrom ? new Date(dateFrom) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);

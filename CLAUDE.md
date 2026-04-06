@@ -7,13 +7,17 @@ Aplicación web para gestionar préstamos de artículos a estudiantes universita
 
 ## Stack
 
-- **Framework:** Next.js (App Router)
-- **Base de datos:** PostgreSQL (Vercel Postgres)
-- **ORM:** Prisma
-- **Autenticación:** NextAuth.js
+- **Framework:** Next.js 16 (App Router)
+- **Base de datos:** PostgreSQL (via `@prisma/adapter-pg`)
+- **ORM:** Prisma 7
+- **Autenticación:** NextAuth.js v5 (beta, JWT strategy)
 - **Estilos:** Tailwind CSS v4
-- **Lenguaje:** TypeScript 
+- **Lenguaje:** TypeScript
+- **Rate limiting:** Upstash Redis (`@upstash/ratelimit`)
+- **QR scanning:** html5-qrcode (cámara)
+- **QR generación:** react-qr-code, qrcode
 - **Toasters:** Sileo https://sileo.aaryan.design/docs
+- **Validación:** Zod 4
 
 ## Flujo principal
 
@@ -26,38 +30,53 @@ El sistema tiene dos interfaces separadas:
 - Barrera de 5 minutos mínimo entre operaciones sobre el mismo artículo para evitar dobles escaneos accidentales.
 - Si pasan más de 30 segundos entre el primer y segundo escaneo, se cancela y vuelve al inicio.
 - Tras completar una operación, muestra confirmación y vuelve al estado inicial automáticamente.
+- Rate limit: 20 scans/min por IP (Upstash).
 
 ### Panel de gestión (protegido con login)
 - Solo accesible por operadores y administradores.
+- Login de dos pasos para admins: credenciales → selector de sede (si tiene múltiples). Los operadores van directo.
 - Contiene: préstamos activos, historial, inventario, dashboard de métricas, y gestión de sedes/usuarios.
 
 ## Roles
 
-- **Admin:** Acceso global. Puede ver todas las sedes, crear sedes, crear usuarios, ver dashboard comparativo.
-- **Operador:** Acceso limitado a su sede asignada. Ve préstamos, historial e inventario de su sede.
+- **Admin:** Acceso global. Puede ver todas las sedes, crear sedes, crear usuarios, ver dashboard comparativo. Cambia de sede mediante cookie `viewSedeId` (endpoint `POST /api/sede/switch`). sedeId=null en DB.
+- **Operador:** Acceso limitado a su sede asignada. Ve préstamos, historial e inventario de su sede únicamente.
+
+## Contexto de sede (`lib/sede.ts`)
+
+`resolveSedeContext()` resuelve el contexto activo para cada request:
+- Operador: siempre su sedeId, `isGlobalView=false`.
+- Admin sin cookie (o `viewSedeId=all`): `sedeId=null`, `isGlobalView=true` — vista comparativa de todas las sedes.
+- Admin con cookie: sedeId específica, `isGlobalView=false`.
 
 ## Regla de negocio clave
 
-Si un préstamo lleva más de 2 horas sin devolución, se considera vencido. El sistema debe marcarlos visualmente y un cron job (Vercel Cron) revisa periódicamente para actualizar este estado.
+Si un préstamo lleva más de 2 horas sin devolución, se considera vencido. El estado se evalúa en tiempo de consulta (no hay cron job — el umbral de 2h se calcula dinámicamente en las queries).
 
 ## Páginas
 
 1. **`/kiosk`** — Pantalla de escaneo para estudiantes. Sin layout de gestión, sin navegación.
-2. **`/login`** — Autenticación de operadores/admins.
-3. **`/prestamos`** — Préstamos activos de la sede, con alerta visual en los vencidos. Devolución manual posible.
-4. **`/historial`** — Préstamos pasados con filtros (fecha, RUN, artículo, estado). Exportable a CSV.
-5. **`/inventario`** — Artículos de la sede, agregar/editar artículos, generar QR, gestionar categorías.
-6. **`/dashboard`** — Métricas y estadísticas. Filtrable por sede y período.
-7. **`/admin`** — Gestión de sedes y usuarios (solo admin).
+2. **`/login`** — Login de dos pasos (credenciales → selector de sede para admin con múltiples sedes).
+3. **`/prestamos`** — Préstamos activos de la sede, con alerta visual en los vencidos. Devolución manual posible. Auto-polling cada 60s.
+4. **`/historial`** — Préstamos pasados con filtros (fecha, RUN, artículo, estado) y métricas de período. Exportable a CSV.
+5. **`/inventario`** — Artículos de la sede, agregar/editar artículos (individual o por lote), generar QR, gestionar categorías.
+6. **`/dashboard`** — KPIs, gráficos (por día, categoría, hora), top artículos y alumnos. Vista comparativa entre sedes para admin.
+7. **`/admin`** — Gestión de sedes y usuarios (solo admin). Server component + `admin-client.tsx` como Client Component.
 
 ## Modelo de datos (entidades principales)
 
-- **Sede:** id, nombre, estado (activa/inactiva)
-- **Usuario:** id, nombre, usuario, contraseña (hash), rol (admin/operador), sede asignada, estado (activo/inactivo)
-- **Categoría:** id, nombre, sede
-- **Artículo:** id, código interno, nombre, descripción, categoría, sede, estado (disponible/prestado/fuera de servicio)
-- **Alumno:** id, RUN, nombre (se registra en el primer escaneo)
-- **Préstamo:** id, artículo, alumno, sede, fecha/hora préstamo, fecha/hora devolución (null si activo), devuelto a tiempo (bool), devuelto por (manual/escaneo)
+- **Sede:** id, name, active, timestamps
+- **User:** id, name, username (único), passwordHash, role (`ADMIN`|`OPERATOR`), sedeId (null para admins), active
+- **Category:** id, name, sedeId, timestamps
+- **Item:** id, internalCode (único), name, description, categoryId, sedeId, status (`AVAILABLE`|`LOANED`|`OUT_OF_SERVICE`), timestamps
+- **Student:** id, run (único), name, timestamps (se crea en el primer escaneo)
+- **Loan:** id, itemId, studentId, sedeId, loanDate, returnDate (null si activo), returnedOnTime (bool|null), returnMethod (`SCAN`|`MANUAL`)
+
+## Rate limiting
+
+- `loginLimiter`: 5 intentos / 60s por IP
+- `kioskLimiter`: 20 scans / 60s por IP
+- Implementado en `lib/rate-limit.ts` con Upstash Redis.
 
 ## Convenciones
 
@@ -70,43 +89,81 @@ Si un préstamo lleva más de 2 horas sin devolución, se considera vencido. El 
 - Validación con Zod.
 - Cada página tiene su propia carpeta con `page.tsx` y componentes locales si los necesita.
 
-## Estructura de carpetas esperada
+## Estructura de carpetas real
 
 ```
 app/
   (kiosk)/
     kiosk/
+      layout.tsx
       page.tsx
   (auth)/
+    layout.tsx
     login/
       page.tsx
   (dashboard)/
-    layout.tsx          ← layout con sidebar/nav para todas las páginas de gestión
-    prestamos/
-      page.tsx
-    historial/
-      page.tsx
-    inventario/
-      page.tsx
-    dashboard/
-      page.tsx
+    layout.tsx             ← sidebar/nav para todas las páginas de gestión
+    dashboard/page.tsx
+    prestamos/page.tsx
+    historial/page.tsx
+    inventario/page.tsx
     admin/
-      page.tsx
+      page.tsx             ← server component (auth check)
+      admin-client.tsx     ← client component con toda la UI de admin
+  api/
+    auth/login/route.ts
+    auth/[...nextauth]/route.ts
+    admin/
+      users/route.ts
+      users/[id]/route.ts
+      sedes/route.ts
+      sedes/[id]/route.ts
+    sede/switch/route.ts
+    inventory/
+      items/route.ts
+      items/[id]/route.ts
+      items/[id]/toggle-service/route.ts
+      categories/route.ts
+      categories/[id]/route.ts
+      distribution/route.ts
+    loans/
+      active/route.ts
+      history/route.ts
+      [id]/return/route.ts
+    dashboard/metrics/route.ts
+    kiosk/
+      scan-student/route.ts
+      scan-item/route.ts
 prisma/
   schema.prisma
 lib/
-  auth.ts
-  db.ts
-  utils.ts
+  auth.ts       ← NextAuth config, middleware, JWT callbacks
+  db.ts         ← Prisma client singleton (PrismaPg adapter)
+  rate-limit.ts ← Upstash rate limiters (login, kiosk)
+  sede.ts       ← resolveSedeContext() helper
 components/
-  ui/                   ← componentes reutilizables (botones, tablas, modales, etc.)
-  kiosk/                ← componentes específicos del kiosco
-  dashboard/            ← componentes específicos del panel de gestión
+  ui/
+    filter-select.tsx
+  dashboard/
+    header.tsx
+    sidebar.tsx
+    logout-action.ts
+types/
+  next-auth.d.ts
+scripts/
+  seed-users.ts  ← 7 sedes, usuarios de prueba, artículos, préstamos
 ```
+
+## Credenciales de prueba (seed)
+
+- Admin: `admin` / `admin123`
+- Operador: `operador` / `operador123`
 
 ## Notas importantes
 
 - El QR de la cédula chilena tiene formato URL: `https://portal.nuevosidiv.registrocivil.cl/document-validity?RUN=XXXXXXXX-X&type=CEDULA&serial=...&mrz=...`. Solo necesitamos extraer el parámetro `RUN`.
 - Los QR de artículos los generamos nosotros. El contenido del QR es el código interno del artículo.
 - La pantalla de kiosco debe estar completamente aislada del panel de gestión. Sin navegación, sin acceso al layout de gestión.
-- El sistema debe funcionar con lector QR USB (que actúa como teclado) o con cámara del dispositivo. Para las primeras pruebas, usaremos la cámara de un celular. 
+- El sistema debe funcionar con lector QR USB (que actúa como teclado) o con cámara del dispositivo (html5-qrcode).
+- Las páginas de admin en `/api/admin/` y `/admin` solo son accesibles con rol `ADMIN`. Las demás rutas protegidas aceptan `ADMIN` u `OPERATOR`.
+- No hay cron jobs activos — el estado de vencido se calcula en cada query con el umbral de 2h.

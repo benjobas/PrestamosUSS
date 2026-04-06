@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { FilterSelect } from "@/components/ui/filter-select";
+import { useState, useEffect, useCallback } from "react";
 
 interface KPIs {
   totalLoans: number;
@@ -63,11 +62,6 @@ interface LateReturner {
   lateRate: number;
 }
 
-interface SedeOption {
-  id: string;
-  name: string;
-}
-
 interface MetricsResponse {
   userRole: "ADMIN" | "OPERATOR";
   kpis: KPIs;
@@ -79,7 +73,6 @@ interface MetricsResponse {
   topItems: TopItem[];
   topBorrowers: TopBorrower[];
   lateReturners: LateReturner[];
-  sedes: SedeOption[];
 }
 
 const CATEGORY_COLORS = [
@@ -113,7 +106,6 @@ function formatShortDate(dateStr: string): string {
 }
 
 export default function DashboardPage() {
-  const [sedeId, setSedeId] = useState("");
   const [dateFrom, setDateFrom] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
@@ -130,7 +122,6 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (sedeId) params.set("sedeId", sedeId);
       if (dateFrom) params.set("dateFrom", dateFrom);
       if (dateTo) params.set("dateTo", dateTo);
       const res = await fetch(`/api/dashboard/metrics?${params}`);
@@ -140,21 +131,20 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [sedeId, dateFrom, dateTo]);
+  }, [dateFrom, dateTo]);
 
   useEffect(() => {
     fetchMetrics();
   }, [fetchMetrics]);
 
-  const isAdmin = data?.userRole === "ADMIN";
+  // Re-fetch when admin switches sede
+  useEffect(() => {
+    const handler = () => fetchMetrics();
+    window.addEventListener("sede-changed", handler);
+    return () => window.removeEventListener("sede-changed", handler);
+  }, [fetchMetrics]);
 
-  const sedeOptions = useMemo(() => {
-    if (!data) return [];
-    return [
-      { value: "", label: "Todas las Sedes", icon: "apartment" },
-      ...data.sedes.map((s) => ({ value: s.id, label: s.name, icon: "location_on" })),
-    ];
-  }, [data]);
+  const isAdmin = data?.userRole === "ADMIN";
 
   // KPI variations
   const totalVariation = data ? calcVariation(data.kpis.totalLoans, data.kpis.totalLoansPrevious) : null;
@@ -168,8 +158,8 @@ export default function DashboardPage() {
   const maxHourCount = data ? Math.max(...data.loansByHour.map((h) => h.count), 1) : 1;
   const today = new Date().toISOString().slice(0, 10);
 
-  // Show single-sede panel when operator or specific sede selected
-  const showSedeMetrics = !isAdmin || sedeId !== "";
+  // Show single-sede panel when sedeMetrics is returned (operator or specific sede selected via header)
+  const showSedeMetrics = data?.sedeMetrics !== null;
 
   if (loading && !data) {
     return (
@@ -202,15 +192,6 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            {isAdmin && (
-              <FilterSelect
-                value={sedeId}
-                onChange={setSedeId}
-                variant="pill"
-                placeholder="Todas las Sedes"
-                options={sedeOptions}
-              />
-            )}
             <div className="flex items-center gap-2 bg-vgsurface-lowest px-4 py-2.5 rounded-full border border-vgoutline-variant/10 shadow-sm">
               <span className="material-symbols-outlined text-[18px] text-vgprimary">calendar_today</span>
               <input

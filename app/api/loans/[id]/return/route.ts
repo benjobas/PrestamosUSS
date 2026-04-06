@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
@@ -7,8 +7,8 @@ export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
@@ -23,7 +23,8 @@ export async function POST(
     return Response.json({ error: "Préstamo no encontrado" }, { status: 404 });
   }
 
-  if (loan.sedeId !== session.user.sedeId) {
+  // Operators can only return loans from their sede; admins can return from any viewed sede
+  if (!ctx.isGlobalView && loan.sedeId !== ctx.sedeId) {
     return Response.json({ error: "No autorizado" }, { status: 403 });
   }
 

@@ -1,18 +1,21 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  const sedeFilter = ctx.sedeId ? { sedeId: ctx.sedeId } : {};
+
   const categories = await prisma.category.findMany({
-    where: { sedeId: session.user.sedeId },
+    where: sedeFilter,
     include: {
       _count: { select: { items: true } },
+      sede: { select: { name: true } },
     },
     orderBy: { name: "asc" },
   });
@@ -22,7 +25,9 @@ export async function GET() {
       id: c.id,
       name: c.name,
       itemCount: c._count.items,
+      sedeName: c.sede.name,
     })),
+    isGlobalView: ctx.isGlobalView,
   });
 }
 
@@ -31,9 +36,12 @@ const createSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
-    return Response.json({ error: "No autorizado" }, { status: 401 });
+  const ctx = await resolveSedeContext();
+  if (!ctx || ctx.isGlobalView) {
+    return Response.json(
+      { error: ctx?.isGlobalView ? "Selecciona una sede específica para crear categorías" : "No autorizado" },
+      { status: ctx?.isGlobalView ? 400 : 401 }
+    );
   }
 
   const body = await request.json();
@@ -42,7 +50,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
   }
 
-  const sedeId = session.user.sedeId;
+  const sedeId = ctx.sedeId!;
 
   // Check for duplicate name in the same sede
   const existing = await prisma.category.findFirst({

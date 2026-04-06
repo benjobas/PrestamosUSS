@@ -34,7 +34,6 @@ async function main() {
 
   // --- Sedes ---
   const sedeNames = [
-    "Central",
     "Bellavista",
     "Los Leones",
     "Ciudad Universitaria",
@@ -51,7 +50,6 @@ async function main() {
   const sedes = await prisma.sede.findMany({ orderBy: { name: "asc" } });
   sedes.forEach((s) => console.log(`  - ${s.name}`));
 
-  const sedeCentral = sedes.find((s) => s.name === "Central")!;
   const sedeBellavista = sedes.find((s) => s.name === "Bellavista")!;
 
   // --- Users ---
@@ -59,16 +57,16 @@ async function main() {
   const adminHash = await bcrypt.hash("admin123", 10);
   await prisma.user.upsert({
     where: { username: "admin" },
-    update: { passwordHash: adminHash, sedeId: sedeCentral.id },
+    update: { passwordHash: adminHash, sedeId: null },
     create: {
       name: "Administrador General",
       username: "admin",
       passwordHash: adminHash,
       role: "ADMIN",
-      sedeId: sedeCentral.id,
+      sedeId: null,
     },
   });
-  console.log("  - admin → Central");
+  console.log("  - admin → Todas las Sedes");
 
   const opHash = await bcrypt.hash("operador123", 10);
   await prisma.user.upsert({
@@ -222,7 +220,7 @@ async function main() {
   console.log("  Estudiantes: ", students.length);
   console.log("  Préstamos:   ", loansData.length);
   console.log("\n--- Credenciales ---");
-  console.log("Admin:    admin / admin123      (Central — acceso global)");
+  console.log("Admin:    admin / admin123      (Todas las Sedes — acceso global)");
   console.log("Operador: operador / operador123 (Bellavista)");
   console.log("========================================");
 }

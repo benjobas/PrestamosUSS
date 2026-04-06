@@ -1,12 +1,12 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
 export async function GET(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
@@ -16,11 +16,11 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search")?.trim() || "";
   const category = searchParams.get("category")?.trim() || "";
 
-  const sedeId = session.user.sedeId;
+  const sedeFilter = ctx.sedeId ? { sedeId: ctx.sedeId } : {};
 
   // Build where clause
   const where: Record<string, unknown> = {
-    sedeId,
+    ...sedeFilter,
     returnDate: null,
   };
 
@@ -37,9 +37,9 @@ export async function GET(request: NextRequest) {
     ];
   }
 
-  // Fetch categories for this sede (for filter dropdown)
+  // Fetch categories for filter dropdown
   const categoriesPromise = prisma.category.findMany({
-    where: { sedeId },
+    where: ctx.sedeId ? { sedeId: ctx.sedeId } : {},
     select: { name: true },
     orderBy: { name: "asc" },
   });
@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
             category: { select: { name: true } },
           },
         },
+        sede: { select: { name: true } },
       },
       orderBy: { loanDate: "asc" },
       skip: (page - 1) * limit,
@@ -67,9 +68,9 @@ export async function GET(request: NextRequest) {
 
   const now = Date.now();
 
-  // Count all overdue in the sede (not just this page)
+  // Count all overdue (not just this page)
   const allActiveLoans = await prisma.loan.findMany({
-    where: { sedeId, returnDate: null },
+    where: { ...sedeFilter, returnDate: null },
     select: { loanDate: true },
   });
 
@@ -88,6 +89,7 @@ export async function GET(request: NextRequest) {
       internalCode: loan.item.internalCode,
       categoryName: loan.item.category.name,
     },
+    sedeName: loan.sede.name,
     loanDate: loan.loanDate.toISOString(),
     isOverdue: now - new Date(loan.loanDate).getTime() > TWO_HOURS_MS,
   }));
@@ -100,5 +102,6 @@ export async function GET(request: NextRequest) {
     limit,
     totalPages: Math.ceil(total / limit),
     categories: categoriesRaw.map((c) => c.name),
+    isGlobalView: ctx.isGlobalView,
   });
 }

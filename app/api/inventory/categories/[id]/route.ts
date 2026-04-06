@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 
@@ -6,15 +6,16 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
   const { id } = await params;
 
+  const catWhere = ctx.isGlobalView ? { id } : { id, sedeId: ctx.sedeId! };
   const category = await prisma.category.findFirst({
-    where: { id, sedeId: session.user.sedeId },
+    where: catWhere,
     include: { _count: { select: { items: true } } },
   });
 

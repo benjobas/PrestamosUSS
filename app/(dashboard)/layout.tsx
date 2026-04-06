@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { Manrope, Inter } from "next/font/google";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -34,16 +35,37 @@ export default async function DashboardLayout({
   }
 
   const { name, role, sedeId } = session.user;
+  const isAdmin = role === "ADMIN";
 
-  // Fetch sede name
-  let sedeName = "Sin sede";
-  if (sedeId) {
+  // Read viewSedeId from cookie (admin only)
+  const cookieStore = await cookies();
+  const viewSedeId = isAdmin ? (cookieStore.get("viewSedeId")?.value || "all") : (sedeId || "");
+
+  // Resolve the displayed sede name
+  let sedeName = "Todas las Sedes";
+  if (!isAdmin && sedeId) {
     const sede = await prisma.sede.findUnique({
       where: { id: sedeId },
       select: { name: true },
     });
     if (sede) sedeName = sede.name;
+  } else if (isAdmin && viewSedeId && viewSedeId !== "all") {
+    const sede = await prisma.sede.findUnique({
+      where: { id: viewSedeId },
+      select: { name: true },
+    });
+    if (sede) sedeName = sede.name;
   }
+
+  // Fetch all active sedes for the switcher (admin only)
+  // Exclude "Central" — it was a legacy placeholder for "all sedes"
+  const sedes = isAdmin
+    ? await prisma.sede.findMany({
+        where: { active: true, name: { not: "Central" } },
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      })
+    : [];
 
   return (
     <div className={`${manrope.variable} ${inter.variable} bg-vgsurface text-vgon-background flex min-h-screen`}>
@@ -54,7 +76,13 @@ export default async function DashboardLayout({
       />
       <Sidebar role={role} />
       <main className="flex-1 ml-64 min-h-screen flex flex-col">
-        <DashboardHeader userName={name} userRole={role} sedeName={sedeName} />
+        <DashboardHeader
+          userName={name}
+          userRole={role}
+          sedeName={sedeName}
+          sedes={sedes}
+          currentViewSedeId={isAdmin ? viewSedeId : undefined}
+        />
         {children}
       </main>
     </div>

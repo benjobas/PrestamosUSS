@@ -122,6 +122,13 @@ export default function HistorialPage() {
     fetchHistory();
   }, [fetchHistory]);
 
+  // Re-fetch when admin switches sede
+  useEffect(() => {
+    const handler = () => { setPage(1); fetchHistory(); };
+    window.addEventListener("sede-changed", handler);
+    return () => window.removeEventListener("sede-changed", handler);
+  }, [fetchHistory]);
+
   // Reset to page 1 when filters change
   useEffect(() => {
     setPage(1);

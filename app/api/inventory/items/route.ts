@@ -1,11 +1,11 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 export async function GET(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
   const categoryId = searchParams.get("categoryId")?.trim() || "";
   const status = searchParams.get("status")?.trim() || "";
 
-  const sedeId = session.user.sedeId;
+  const sedeFilter = ctx.sedeId ? { sedeId: ctx.sedeId } : {};
 
-  const where: Record<string, unknown> = { sedeId };
+  const where: Record<string, unknown> = { ...sedeFilter };
   if (categoryId) {
     where.categoryId = categoryId;
   }
@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         category: { select: { id: true, name: true } },
+        sede: { select: { name: true } },
       },
       orderBy: [{ status: "asc" }, { name: "asc" }],
       skip: (page - 1) * limit,
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
     prisma.item.count({ where }),
     prisma.item.groupBy({
       by: ["status"],
-      where: { sedeId },
+      where: sedeFilter,
       _count: { _all: true },
     }),
   ]);
@@ -59,12 +60,14 @@ export async function GET(request: NextRequest) {
       description: item.description,
       status: item.status,
       category: { id: item.category.id, name: item.category.name },
+      sedeName: item.sede.name,
     })),
     counts,
     page,
     limit,
     totalPages: Math.ceil(total / limit),
     total,
+    isGlobalView: ctx.isGlobalView,
   });
 }
 
@@ -77,9 +80,12 @@ const createSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
-    return Response.json({ error: "No autorizado" }, { status: 401 });
+  const ctx = await resolveSedeContext();
+  if (!ctx || ctx.isGlobalView) {
+    return Response.json(
+      { error: ctx?.isGlobalView ? "Selecciona una sede específica para crear artículos" : "No autorizado" },
+      { status: ctx?.isGlobalView ? 400 : 401 }
+    );
   }
 
   const body = await request.json();
@@ -89,7 +95,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { name, categoryId, description, internalCode, quantity } = parsed.data;
-  const sedeId = session.user.sedeId;
+  const sedeId = ctx.sedeId!;
 
   // Verify category belongs to this sede
   const category = await prisma.category.findFirst({

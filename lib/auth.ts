@@ -36,7 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           username: user.username,
           role: user.role,
-          sedeId: sedeId || user.sedeId,
+          sedeId: user.role === "ADMIN" ? (sedeId || user.sedeId) : user.sedeId,
         };
       },
     }),

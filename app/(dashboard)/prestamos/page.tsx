@@ -94,6 +94,13 @@ export default function PrestamosPage() {
     return () => clearInterval(interval);
   }, [fetchLoans, page, category]);
 
+  // Re-fetch when admin switches sede
+  useEffect(() => {
+    const handler = () => fetchLoans(page, category);
+    window.addEventListener("sede-changed", handler);
+    return () => window.removeEventListener("sede-changed", handler);
+  }, [fetchLoans, page, category]);
+
   // Tick for duration updates
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), DURATION_TICK);

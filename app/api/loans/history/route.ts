@@ -1,14 +1,14 @@
-import { auth } from "@/lib/auth";
+import { resolveSedeContext } from "@/lib/sede";
 import { prisma } from "@/lib/db";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.sedeId) {
+  const ctx = await resolveSedeContext();
+  if (!ctx) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const sedeId = session.user.sedeId;
+  const sedeFilter = ctx.sedeId ? { sedeId: ctx.sedeId } : {};
   const { searchParams } = request.nextUrl;
 
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
@@ -19,9 +19,9 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search")?.trim() || "";
   const all = searchParams.get("all") === "true";
 
-  // Base: only completed loans (returnDate not null) for this sede
+  // Base: only completed loans (returnDate not null)
   const where: Record<string, unknown> = {
-    sedeId,
+    ...sedeFilter,
     returnDate: { not: null },
   };
 
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
     const prevTo = new Date(fromDate.getTime() - 1);
 
     const prevWhere: Record<string, unknown> = {
-      sedeId,
+      ...sedeFilter,
       returnDate: { not: null },
       loanDate: { gte: prevFrom, lte: prevTo },
     };
