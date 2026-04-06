@@ -88,8 +88,8 @@ export default function CameraScanner({ onScan, active }: CameraScannerProps) {
   if (!active) return null;
 
   return (
-    <div className="w-full max-w-md flex flex-col items-center gap-6 animate-[fadeIn_0.4s_ease-out]">
-      <div className="relative w-80 h-80 rounded-3xl overflow-hidden bg-black/90 shadow-[0_8px_40px_rgba(0,32,69,0.15)]">
+    <div className="w-full max-w-md flex flex-col items-center gap-3 animate-[fadeIn_0.4s_ease-out]">
+      <div className="relative w-64 h-64 rounded-2xl overflow-hidden bg-black/90 shadow-[0_8px_40px_rgba(0,32,69,0.15)]">
         {/* Scanning overlay corners */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           {/* Top-left */}
@@ -134,7 +134,7 @@ export default function CameraScanner({ onScan, active }: CameraScannerProps) {
         )}
       </div>
 
-      <p className="text-vgon-surface/50 text-base font-medium">
+      <p className="text-vgon-surface/50 text-sm font-medium">
         Posicione el código QR frente a la cámara
       </p>
     </div>

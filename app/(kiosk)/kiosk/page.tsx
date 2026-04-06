@@ -270,16 +270,16 @@ export default function KioskPage() {
   return (
     <div className="bg-vgsurface font-[family-name:var(--font-inter)] text-vgon-surface flex flex-col h-full">
       {/* Header */}
-      <header className="flex justify-between items-center px-12 h-24 w-full bg-white/80 backdrop-blur-md z-40 shrink-0">
-        <div className="flex items-center gap-4">
-          <span className="text-3xl font-extrabold tracking-tighter text-vgprimary font-[family-name:var(--font-manrope)]">
+      <header className="flex justify-between items-center px-8 h-14 w-full bg-white/80 backdrop-blur-md z-40 shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-extrabold tracking-tighter text-vgprimary font-[family-name:var(--font-manrope)]">
             Vanguard Loan Management
           </span>
         </div>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
           {/* Progress Indicator */}
-          <div className="flex items-center gap-3 bg-vgsurface-low px-6 py-2 rounded-full border border-vgsurface-highest">
-            <span className="font-[family-name:var(--font-inter)] font-bold text-vgprimary text-sm uppercase tracking-widest">
+          <div className="flex items-center gap-2.5 bg-vgsurface-low px-4 py-1.5 rounded-full border border-vgsurface-highest">
+            <span className="font-[family-name:var(--font-inter)] font-bold text-vgprimary text-xs uppercase tracking-widest">
               {state === "scan-student"
                 ? "Paso 1 de 2"
                 : state === "scan-item"
@@ -288,9 +288,9 @@ export default function KioskPage() {
                     ? "Completado"
                     : "Error"}
             </span>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1">
               <div
-                className={`w-8 h-2 rounded-full transition-colors ${
+                className={`w-6 h-1.5 rounded-full transition-colors ${
                   state === "scan-student" ||
                   state === "scan-item" ||
                   state === "success"
@@ -301,7 +301,7 @@ export default function KioskPage() {
                 }`}
               />
               <div
-                className={`w-8 h-2 rounded-full transition-colors ${
+                className={`w-6 h-1.5 rounded-full transition-colors ${
                   state === "scan-item" || state === "success"
                     ? "bg-vgprimary"
                     : state === "error"
@@ -311,16 +311,16 @@ export default function KioskPage() {
               />
             </div>
           </div>
-          <div className="flex items-center gap-6 border-l pl-8 border-vgsurface-highest">
+          <div className="flex items-center gap-4 border-l pl-6 border-vgsurface-highest">
             <div className="flex flex-col items-end">
-              <span className="font-[family-name:var(--font-manrope)] font-bold text-sm tracking-wide text-vgprimary">
+              <span className="font-[family-name:var(--font-manrope)] font-bold text-xs tracking-wide text-vgprimary">
                 Kiosk Mode
               </span>
-              <span className="font-[family-name:var(--font-inter)] text-[10px] tracking-[0.1em] text-vgsecondary uppercase">
+              <span className="font-[family-name:var(--font-inter)] text-[9px] tracking-[0.1em] text-vgsecondary uppercase">
                 Terminal #042
               </span>
             </div>
-            <span className="material-symbols-outlined !text-4xl text-vgprimary">
+            <span className="material-symbols-outlined !text-2xl text-vgprimary">
               sensors
             </span>
           </div>
@@ -328,26 +328,26 @@ export default function KioskPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-8 relative">
+      <main className="flex-1 flex flex-col items-center justify-center px-8 py-4 relative overflow-y-auto">
         {/* State 1: Scan Student */}
         {state === "scan-student" && (
           <div className="flex flex-col items-center text-center w-full max-w-4xl animate-[fadeIn_0.7s_ease-out]">
             {/* Icon — smaller when camera is active to save space */}
-            <div className={`relative ${inputMode === "camera" ? "mb-6" : "mb-12"}`}>
+            <div className={`relative ${inputMode === "camera" ? "mb-3" : "mb-6"}`}>
               <div className="absolute inset-0 bg-vgprimary/5 rounded-full scale-150 blur-3xl" />
-              <div className={`bg-vgsurface-lowest rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,30,0.06)] relative transition-all ${inputMode === "camera" ? "p-8" : "p-16"}`}>
-                <span className={`material-symbols-outlined text-vgprimary transition-all ${inputMode === "camera" ? "!text-[80px]" : "!text-[160px]"}`}>
+              <div className={`bg-vgsurface-lowest rounded-2xl shadow-[0_8px_24px_rgba(26,28,30,0.06)] relative transition-all ${inputMode === "camera" ? "p-5" : "p-8"}`}>
+                <span className={`material-symbols-outlined text-vgprimary transition-all ${inputMode === "camera" ? "!text-[56px]" : "!text-[88px]"}`}>
                   badge
                 </span>
               </div>
               {inputMode !== "camera" && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-1 bg-vgsecondary shadow-[0_0_15px_#13696a] opacity-50" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-0.5 bg-vgsecondary shadow-[0_0_15px_#13696a] opacity-50" />
               )}
             </div>
-            <h1 className={`font-[family-name:var(--font-manrope)] font-extrabold text-vgprimary tracking-tight transition-all ${inputMode === "camera" ? "text-3xl md:text-4xl mb-2" : "text-5xl md:text-6xl mb-4"}`}>
+            <h1 className={`font-[family-name:var(--font-manrope)] font-extrabold text-vgprimary tracking-tight transition-all ${inputMode === "camera" ? "text-2xl mb-1" : "text-3xl md:text-4xl mb-2"}`}>
               Identificación de Estudiante
             </h1>
-            <p className={`text-vgon-surface/60 max-w-2xl font-medium ${inputMode === "camera" ? "text-lg mb-5" : "text-2xl mb-8"}`}>
+            <p className={`text-vgon-surface/60 max-w-2xl font-medium ${inputMode === "camera" ? "text-base mb-4" : "text-lg mb-5"}`}>
               {inputMode === "scanner"
                 ? "Acerque su cédula al lector QR para capturar su RUN."
                 : inputMode === "camera"
@@ -356,7 +356,7 @@ export default function KioskPage() {
             </p>
 
             {/* Mode selector */}
-            <div className="flex items-center gap-2 p-1.5 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,32,69,0.06)] border border-vgsurface-highest/60 mb-8">
+            <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,32,69,0.06)] border border-vgsurface-highest/60 mb-5">
               {([
                 { mode: "scanner" as InputMode, icon: "qr_code_scanner", label: "Lector QR" },
                 { mode: "camera" as InputMode, icon: "photo_camera", label: "Cámara" },
@@ -365,13 +365,13 @@ export default function KioskPage() {
                 <button
                   key={mode}
                   onClick={() => { setInputMode(mode); setInputValue(""); setManualRut(""); }}
-                  className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-[family-name:var(--font-inter)] font-semibold text-sm tracking-wide transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-[family-name:var(--font-inter)] font-semibold text-sm tracking-wide transition-all cursor-pointer ${
                     inputMode === mode
                       ? "bg-vgprimary text-white shadow-md"
                       : "text-vgon-surface/50 hover:text-vgprimary hover:bg-vgsurface-low"
                   }`}
                 >
-                  <span className={`material-symbols-outlined !text-xl ${inputMode === mode ? "" : ""}`}>
+                  <span className="material-symbols-outlined !text-lg">
                     {icon}
                   </span>
                   {label}
@@ -388,12 +388,12 @@ export default function KioskPage() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleInputKeyDown}
-                  className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
+                  className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-4 text-center text-2xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
                   placeholder="Esperando RUN..."
                   autoFocus
                 />
-                <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                  <span className="material-symbols-outlined !text-4xl text-vgsecondary animate-pulse">
+                <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                  <span className="material-symbols-outlined !text-3xl text-vgsecondary animate-pulse">
                     qr_code_scanner
                   </span>
                 </div>
@@ -410,7 +410,7 @@ export default function KioskPage() {
 
             {/* Manual RUT mode */}
             {inputMode === "manual" && (
-              <div className="w-full max-w-md flex flex-col items-center gap-5 animate-[fadeIn_0.3s_ease-out]">
+              <div className="w-full max-w-md flex flex-col items-center gap-3 animate-[fadeIn_0.3s_ease-out]">
                 <div className="w-full relative">
                   <input
                     ref={manualInputRef}
@@ -425,13 +425,13 @@ export default function KioskPage() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleManualSubmit();
                     }}
-                    className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest/70 tracking-widest"
+                    className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-4 text-center text-2xl font-bold text-vgprimary placeholder:text-vgsurface-highest/70 tracking-widest"
                     placeholder="12.345.678-9"
                     autoFocus
                     inputMode="numeric"
                   />
-                  <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                    <span className="material-symbols-outlined !text-4xl text-vgprimary/30">
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                    <span className="material-symbols-outlined !text-3xl text-vgprimary/30">
                       badge
                     </span>
                   </div>
@@ -439,16 +439,16 @@ export default function KioskPage() {
                 <button
                   onClick={handleManualSubmit}
                   disabled={!manualRut.trim() || processing}
-                  className="w-full bg-vgprimary text-white py-5 rounded-2xl font-[family-name:var(--font-manrope)] font-bold text-xl flex items-center justify-center gap-3 hover:bg-vgprimary/90 active:scale-[0.98] transition-all shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                  className="w-full bg-vgprimary text-white py-3.5 rounded-2xl font-[family-name:var(--font-manrope)] font-bold text-lg flex items-center justify-center gap-3 hover:bg-vgprimary/90 active:scale-[0.98] transition-all shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
                 >
                   {processing ? (
                     <>
-                      <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Procesando...
                     </>
                   ) : (
                     <>
-                      <span className="material-symbols-outlined !text-2xl">
+                      <span className="material-symbols-outlined !text-xl">
                         arrow_forward
                       </span>
                       Continuar
@@ -464,39 +464,39 @@ export default function KioskPage() {
         {state === "scan-item" && (
           <div className="flex flex-col items-center text-center w-full max-w-4xl animate-[fadeIn_0.7s_ease-out]">
             {/* Icon — smaller when camera is active */}
-            <div className={`relative ${inputMode === "camera" ? "mb-4" : "mb-12"}`}>
+            <div className={`relative ${inputMode === "camera" ? "mb-3" : "mb-6"}`}>
               <div className="absolute inset-0 bg-vgsecondary/5 rounded-full scale-150 blur-3xl" />
-              <div className={`bg-vgsurface-lowest rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,30,0.06)] relative transition-all ${inputMode === "camera" ? "p-8" : "p-16"}`}>
+              <div className={`bg-vgsurface-lowest rounded-2xl shadow-[0_8px_24px_rgba(26,28,30,0.06)] relative transition-all ${inputMode === "camera" ? "p-5" : "p-8"}`}>
                 <span
-                  className={`material-symbols-outlined text-vgsecondary transition-all ${inputMode === "camera" ? "!text-[80px]" : "!text-[160px]"}`}
+                  className={`material-symbols-outlined text-vgsecondary transition-all ${inputMode === "camera" ? "!text-[56px]" : "!text-[88px]"}`}
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
                   inventory_2
                 </span>
               </div>
               {inputMode !== "camera" && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-1 bg-vgprimary shadow-[0_0_15px_#002045] opacity-50" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-0.5 bg-vgprimary shadow-[0_0_15px_#002045] opacity-50" />
               )}
             </div>
-            <div className="flex items-center gap-3 mb-4 bg-vgprimary/10 px-6 py-2 rounded-full border border-vgprimary/20">
-              <span className="material-symbols-outlined !text-2xl text-vgprimary">
+            <div className="flex items-center gap-2 mb-2 bg-vgprimary/10 px-4 py-1.5 rounded-full border border-vgprimary/20">
+              <span className="material-symbols-outlined !text-lg text-vgprimary">
                 person
               </span>
-              <span className="font-[family-name:var(--font-manrope)] font-bold text-vgprimary text-xl">
+              <span className="font-[family-name:var(--font-manrope)] font-bold text-vgprimary text-base">
                 RUN: {formatRun(studentRun)}
               </span>
             </div>
-            <h1 className={`font-[family-name:var(--font-manrope)] font-extrabold text-vgprimary tracking-tight ${inputMode === "camera" ? "text-3xl md:text-4xl mb-2" : "text-5xl md:text-6xl mb-4"}`}>
+            <h1 className={`font-[family-name:var(--font-manrope)] font-extrabold text-vgprimary tracking-tight ${inputMode === "camera" ? "text-2xl mb-1" : "text-3xl md:text-4xl mb-2"}`}>
               Escaneo de Artículo
             </h1>
-            <p className={`text-vgon-surface/60 max-w-2xl font-medium ${inputMode === "camera" ? "text-lg mb-4" : "text-2xl mb-6"}`}>
+            <p className={`text-vgon-surface/60 max-w-2xl font-medium ${inputMode === "camera" ? "text-base mb-4" : "text-lg mb-5"}`}>
               {inputMode === "camera"
                 ? "Apunte la cámara al código QR del artículo."
                 : "Escanee el código QR del artículo que desea procesar."}
             </p>
 
             {/* Mode selector for item scan (scanner / camera only) */}
-            <div className="flex items-center gap-2 p-1.5 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,32,69,0.06)] border border-vgsurface-highest/60 mb-6">
+            <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,32,69,0.06)] border border-vgsurface-highest/60 mb-5">
               {([
                 { mode: "scanner" as InputMode, icon: "qr_code_scanner", label: "Lector QR" },
                 { mode: "camera" as InputMode, icon: "photo_camera", label: "Cámara" },
@@ -504,13 +504,13 @@ export default function KioskPage() {
                 <button
                   key={mode}
                   onClick={() => { setInputMode(mode); setInputValue(""); }}
-                  className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-[family-name:var(--font-inter)] font-semibold text-sm tracking-wide transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-[family-name:var(--font-inter)] font-semibold text-sm tracking-wide transition-all cursor-pointer ${
                     inputMode === mode
                       ? "bg-vgprimary text-white shadow-md"
                       : "text-vgon-surface/50 hover:text-vgprimary hover:bg-vgsurface-low"
                   }`}
                 >
-                  <span className="material-symbols-outlined !text-xl">
+                  <span className="material-symbols-outlined !text-lg">
                     {icon}
                   </span>
                   {label}
@@ -527,12 +527,12 @@ export default function KioskPage() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleInputKeyDown}
-                  className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
+                  className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-4 text-center text-2xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
                   placeholder="Esperando Artículo..."
                   autoFocus
                 />
-                <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                  <span className="material-symbols-outlined !text-4xl text-vgprimary animate-pulse">
+                <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                  <span className="material-symbols-outlined !text-3xl text-vgprimary animate-pulse">
                     barcode_scanner
                   </span>
                 </div>
@@ -552,50 +552,50 @@ export default function KioskPage() {
         {/* State 3: Success */}
         {state === "success" && successData && (
           <div className="flex flex-col items-center text-center animate-[zoomIn_0.5s_ease-out]">
-            <div className="bg-vgsecondary p-12 rounded-full mb-10 shadow-xl">
+            <div className="bg-vgsecondary p-6 rounded-full mb-5 shadow-xl">
               <span
-                className="material-symbols-outlined text-white !text-[160px]"
+                className="material-symbols-outlined text-white !text-[72px]"
                 style={{ fontVariationSettings: "'FILL' 1" }}
               >
                 check_circle
               </span>
             </div>
-            <h2 className="font-[family-name:var(--font-manrope)] font-extrabold text-6xl text-vgprimary mb-8">
+            <h2 className="font-[family-name:var(--font-manrope)] font-extrabold text-3xl md:text-4xl text-vgprimary mb-5">
               Operación Registrada
             </h2>
-            <div className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] flex flex-col gap-6 w-full max-w-2xl border border-vgsurface-low">
-              <div className="flex justify-between items-center border-b border-vgsurface-low pb-6">
+            <div className="bg-white rounded-2xl p-6 shadow-[0_12px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 w-full max-w-xl border border-vgsurface-low">
+              <div className="flex justify-between items-center border-b border-vgsurface-low pb-4">
                 <div className="text-left">
-                  <span className="font-[family-name:var(--font-inter)] uppercase tracking-widest text-vgon-surface/50 text-sm block mb-1">
+                  <span className="font-[family-name:var(--font-inter)] uppercase tracking-widest text-vgon-surface/50 text-xs block mb-0.5">
                     Usuario Identificado
                   </span>
-                  <span className="font-[family-name:var(--font-manrope)] font-bold text-3xl text-vgprimary">
+                  <span className="font-[family-name:var(--font-manrope)] font-bold text-xl text-vgprimary">
                     RUN: {formatRun(successData.run)}
                   </span>
                 </div>
-                <span className="material-symbols-outlined !text-5xl text-vgon-surface/20">
+                <span className="material-symbols-outlined !text-3xl text-vgon-surface/20">
                   account_circle
                 </span>
               </div>
-              <div className="flex justify-between items-center border-b border-vgsurface-low pb-6">
+              <div className="flex justify-between items-center border-b border-vgsurface-low pb-4">
                 <div className="text-left">
-                  <span className="font-[family-name:var(--font-inter)] uppercase tracking-widest text-vgon-surface/50 text-sm block mb-1">
+                  <span className="font-[family-name:var(--font-inter)] uppercase tracking-widest text-vgon-surface/50 text-xs block mb-0.5">
                     Artículo Procesado
                   </span>
-                  <span className="font-[family-name:var(--font-manrope)] font-bold text-3xl text-vgprimary">
+                  <span className="font-[family-name:var(--font-manrope)] font-bold text-xl text-vgprimary">
                     {successData.itemName}
                   </span>
                 </div>
-                <span className="material-symbols-outlined !text-5xl text-vgon-surface/20">
+                <span className="material-symbols-outlined !text-3xl text-vgon-surface/20">
                   category
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-vgsurface-lowest p-6 rounded-2xl border-2 border-dashed border-vgsurface-highest">
-                <span className="font-[family-name:var(--font-inter)] uppercase tracking-widest text-vgon-surface/50 text-sm font-bold">
+              <div className="flex justify-between items-center bg-vgsurface-lowest p-4 rounded-xl border-2 border-dashed border-vgsurface-highest">
+                <span className="font-[family-name:var(--font-inter)] uppercase tracking-widest text-vgon-surface/50 text-xs font-bold">
                   Tipo de Operación
                 </span>
                 <span
-                  className={`px-8 py-2 rounded-full font-bold text-xl tracking-wide ${
+                  className={`px-6 py-1.5 rounded-full font-bold text-base tracking-wide ${
                     successData.operationType === "PRÉSTAMO"
                       ? "bg-vgprimary text-white"
                       : "bg-vgsecondary text-white"
@@ -605,9 +605,9 @@ export default function KioskPage() {
                 </span>
               </div>
             </div>
-            <div className="mt-12 flex items-center gap-4 bg-vgsurface-low px-8 py-4 rounded-full">
-              <div className="w-3 h-3 rounded-full bg-vgsecondary animate-pulse" />
-              <p className="font-[family-name:var(--font-inter)] text-xl text-vgon-surface/60">
+            <div className="mt-6 flex items-center gap-3 bg-vgsurface-low px-6 py-3 rounded-full">
+              <div className="w-2.5 h-2.5 rounded-full bg-vgsecondary animate-pulse" />
+              <p className="font-[family-name:var(--font-inter)] text-base text-vgon-surface/60">
                 Finalizando sesión en{" "}
                 <span className="font-bold text-vgprimary">
                   {countdown} segundos
@@ -621,23 +621,23 @@ export default function KioskPage() {
         {/* State 4: Error */}
         {state === "error" && errorData && (
           <div className="flex flex-col items-center text-center animate-[fadeIn_0.5s_ease-out]">
-            <div className="bg-vgerror p-12 rounded-full mb-10 shadow-xl">
+            <div className="bg-vgerror p-6 rounded-full mb-5 shadow-xl">
               <span
-                className="material-symbols-outlined text-white !text-[160px]"
+                className="material-symbols-outlined text-white !text-[72px]"
                 style={{ fontVariationSettings: "'FILL' 1" }}
               >
                 error
               </span>
             </div>
-            <h2 className="font-[family-name:var(--font-manrope)] font-extrabold text-6xl text-vgprimary mb-6">
+            <h2 className="font-[family-name:var(--font-manrope)] font-extrabold text-3xl md:text-4xl text-vgprimary mb-4">
               Error en la Operación
             </h2>
-            <p className="text-2xl text-vgon-surface/60 max-w-2xl font-medium mb-10">
+            <p className="text-lg text-vgon-surface/60 max-w-xl font-medium mb-6">
               {errorData.message}
             </p>
-            <div className="flex items-center gap-4 bg-vgerror-container/30 px-8 py-4 rounded-full border border-vgerror/20">
-              <div className="w-3 h-3 rounded-full bg-vgerror animate-pulse" />
-              <p className="font-[family-name:var(--font-inter)] text-xl text-vgerror">
+            <div className="flex items-center gap-3 bg-vgerror-container/30 px-6 py-3 rounded-full border border-vgerror/20">
+              <div className="w-2.5 h-2.5 rounded-full bg-vgerror animate-pulse" />
+              <p className="font-[family-name:var(--font-inter)] text-base text-vgerror">
                 Regresando al inicio en{" "}
                 <span className="font-bold">{countdown} segundos</span>...
               </p>
@@ -647,18 +647,18 @@ export default function KioskPage() {
       </main>
 
       {/* Footer */}
-      <footer className="h-32 w-full bg-vgsurface-low flex items-center justify-between px-16 border-t border-vgsurface-highest shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 rounded-full bg-vgsecondary animate-pulse" />
-            <span className="font-[family-name:var(--font-inter)] font-bold tracking-widest text-vgprimary uppercase text-sm">
+      <footer className="h-14 w-full bg-vgsurface-low flex items-center justify-between px-8 border-t border-vgsurface-highest shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-vgsecondary animate-pulse" />
+            <span className="font-[family-name:var(--font-inter)] font-bold tracking-widest text-vgprimary uppercase text-xs">
               Sistema Activo
             </span>
           </div>
           {/* Timeout indicator - only in state 2 */}
           {state === "scan-item" && (
-            <div className="flex items-center gap-2 text-vgerror bg-vgerror-container/30 px-4 py-2 rounded-lg border border-vgerror/20">
-              <span className="material-symbols-outlined !text-xl">timer</span>
+            <div className="flex items-center gap-1.5 text-vgerror bg-vgerror-container/30 px-3 py-1 rounded-lg border border-vgerror/20">
+              <span className="material-symbols-outlined !text-base">timer</span>
               <span className="font-[family-name:var(--font-inter)] font-bold text-xs uppercase tracking-tighter">
                 Cierre en: 00:
                 {timeoutCountdown.toString().padStart(2, "0")}
@@ -666,14 +666,14 @@ export default function KioskPage() {
             </div>
           )}
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           {/* Cancel button - only in state 2 */}
           {state === "scan-item" && (
             <button
               onClick={resetToInitial}
-              className="bg-vgprimary px-10 py-4 rounded-xl font-[family-name:var(--font-manrope)] font-bold text-white flex items-center gap-3 hover:bg-vgprimary/90 active:scale-95 transition-all shadow-lg cursor-pointer"
+              className="bg-vgprimary px-6 py-2 rounded-lg font-[family-name:var(--font-manrope)] font-bold text-white text-sm flex items-center gap-2 hover:bg-vgprimary/90 active:scale-95 transition-all shadow-lg cursor-pointer"
             >
-              <span className="material-symbols-outlined !text-2xl">
+              <span className="material-symbols-outlined !text-lg">
                 cancel
               </span>
               Cancelar Operación
