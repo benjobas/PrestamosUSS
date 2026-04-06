@@ -1,8 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
+
+const CameraScanner = dynamic(() => import("./camera-scanner"), {
+  ssr: false,
+});
 
 type KioskState = "scan-student" | "scan-item" | "success" | "error";
+type InputMode = "scanner" | "camera" | "manual";
 
 interface SuccessData {
   run: string;
@@ -16,6 +22,7 @@ interface ErrorData {
 
 export default function KioskPage() {
   const [state, setState] = useState<KioskState>("scan-student");
+  const [inputMode, setInputMode] = useState<InputMode>("scanner");
   const [studentRun, setStudentRun] = useState("");
   const [studentId, setStudentId] = useState("");
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
@@ -23,9 +30,11 @@ export default function KioskPage() {
   const [countdown, setCountdown] = useState(0);
   const [timeoutCountdown, setTimeoutCountdown] = useState(30);
   const [inputValue, setInputValue] = useState("");
+  const [manualRut, setManualRut] = useState("");
   const [processing, setProcessing] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const manualInputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutCountdownRef = useRef<NodeJS.Timeout | null>(null);
@@ -39,15 +48,19 @@ export default function KioskPage() {
     setCountdown(0);
     setTimeoutCountdown(30);
     setInputValue("");
+    setManualRut("");
     setProcessing(false);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (countdownRef.current) clearInterval(countdownRef.current);
     if (timeoutCountdownRef.current) clearInterval(timeoutCountdownRef.current);
   }, []);
 
-  // Auto-focus input for states 1 and 2
+  // Auto-focus input for scanner mode in states 1 and 2
   useEffect(() => {
-    if (state === "scan-student" || state === "scan-item") {
+    if (
+      (state === "scan-student" || state === "scan-item") &&
+      inputMode === "scanner"
+    ) {
       const focusInput = () => {
         if (inputRef.current && document.activeElement !== inputRef.current) {
           inputRef.current.focus();
@@ -57,7 +70,14 @@ export default function KioskPage() {
       const interval = setInterval(focusInput, 500);
       return () => clearInterval(interval);
     }
-  }, [state]);
+  }, [state, inputMode]);
+
+  // Focus manual input when switching to manual mode
+  useEffect(() => {
+    if (inputMode === "manual") {
+      manualInputRef.current?.focus();
+    }
+  }, [inputMode]);
 
   // 30-second timeout for state 2
   useEffect(() => {
@@ -109,7 +129,13 @@ export default function KioskPage() {
         return run.toUpperCase();
       }
     } catch {
-      // Not a URL
+      // Not a URL — try direct RUT format
+    }
+    // Accept direct RUT: with or without dots, with hyphen + DV
+    // e.g. "12345678-9", "12.345.678-K", "12345678-k"
+    const cleaned = trimmed.replace(/\./g, "");
+    if (/^\d{7,8}-[\dkK]$/i.test(cleaned)) {
+      return cleaned.toUpperCase();
     }
     return null;
   }
@@ -152,6 +178,8 @@ export default function KioskPage() {
       } else {
         setStudentRun(run);
         setStudentId(data.student.id);
+        // If manual mode was used for student, switch to scanner for item step
+        if (inputMode === "manual") setInputMode("scanner");
         setState("scan-item");
       }
     } catch {
@@ -205,6 +233,38 @@ export default function KioskPage() {
         handleItemScan(value);
       }
     }
+  }
+
+  function handleCameraScan(decodedText: string) {
+    if (processing) return;
+    if (state === "scan-student") {
+      handleStudentScan(decodedText);
+    } else if (state === "scan-item") {
+      handleItemScan(decodedText);
+    }
+  }
+
+  function handleManualSubmit() {
+    if (!manualRut.trim() || processing) return;
+    handleStudentScan(manualRut);
+  }
+
+  function formatManualInput(value: string): string {
+    // Strip non-alphanumeric except K/k
+    const raw = value.replace(/[^0-9kK]/g, "");
+    if (raw.length === 0) return "";
+    // Separate body from DV (last char)
+    if (raw.length <= 1) return raw;
+    const body = raw.slice(0, -1);
+    const dv = raw.slice(-1);
+    // Add dots for formatting
+    let formatted = "";
+    const reversed = body.split("").reverse();
+    for (let i = 0; i < reversed.length; i++) {
+      if (i > 0 && i % 3 === 0) formatted = "." + formatted;
+      formatted = reversed[i] + formatted;
+    }
+    return formatted + "-" + dv;
   }
 
   return (
@@ -272,56 +332,151 @@ export default function KioskPage() {
         {/* State 1: Scan Student */}
         {state === "scan-student" && (
           <div className="flex flex-col items-center text-center w-full max-w-4xl animate-[fadeIn_0.7s_ease-out]">
-            <div className="relative mb-12">
+            {/* Icon — smaller when camera is active to save space */}
+            <div className={`relative ${inputMode === "camera" ? "mb-6" : "mb-12"}`}>
               <div className="absolute inset-0 bg-vgprimary/5 rounded-full scale-150 blur-3xl" />
-              <div className="bg-vgsurface-lowest p-16 rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,30,0.06)] relative">
-                <span className="material-symbols-outlined text-vgprimary !text-[160px]">
+              <div className={`bg-vgsurface-lowest rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,30,0.06)] relative transition-all ${inputMode === "camera" ? "p-8" : "p-16"}`}>
+                <span className={`material-symbols-outlined text-vgprimary transition-all ${inputMode === "camera" ? "!text-[80px]" : "!text-[160px]"}`}>
                   badge
                 </span>
               </div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-1 bg-vgsecondary shadow-[0_0_15px_#13696a] opacity-50" />
+              {inputMode !== "camera" && (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-1 bg-vgsecondary shadow-[0_0_15px_#13696a] opacity-50" />
+              )}
             </div>
-            <h1 className="font-[family-name:var(--font-manrope)] font-extrabold text-5xl md:text-6xl text-vgprimary mb-4 tracking-tight">
-              Escaneo de Cédula
+            <h1 className={`font-[family-name:var(--font-manrope)] font-extrabold text-vgprimary tracking-tight transition-all ${inputMode === "camera" ? "text-3xl md:text-4xl mb-2" : "text-5xl md:text-6xl mb-4"}`}>
+              Identificación de Estudiante
             </h1>
-            <p className="text-2xl text-vgon-surface/60 max-w-2xl font-medium mb-10">
-              Por favor, acerque su documento de identidad al escáner para
-              capturar su RUN.
+            <p className={`text-vgon-surface/60 max-w-2xl font-medium ${inputMode === "camera" ? "text-lg mb-5" : "text-2xl mb-8"}`}>
+              {inputMode === "scanner"
+                ? "Acerque su cédula al lector QR para capturar su RUN."
+                : inputMode === "camera"
+                  ? "Apunte la cámara al código QR de su cédula."
+                  : "Ingrese su RUT utilizando el teclado."}
             </p>
-            <div className="w-full max-w-md relative">
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleInputKeyDown}
-                className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
-                placeholder="Esperando RUN..."
-                autoFocus
-              />
-              <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                <span className="material-symbols-outlined !text-4xl text-vgsecondary animate-pulse">
-                  qr_code_scanner
-                </span>
-              </div>
+
+            {/* Mode selector */}
+            <div className="flex items-center gap-2 p-1.5 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,32,69,0.06)] border border-vgsurface-highest/60 mb-8">
+              {([
+                { mode: "scanner" as InputMode, icon: "qr_code_scanner", label: "Lector QR" },
+                { mode: "camera" as InputMode, icon: "photo_camera", label: "Cámara" },
+                { mode: "manual" as InputMode, icon: "keyboard", label: "Ingresar RUT" },
+              ]).map(({ mode, icon, label }) => (
+                <button
+                  key={mode}
+                  onClick={() => { setInputMode(mode); setInputValue(""); setManualRut(""); }}
+                  className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-[family-name:var(--font-inter)] font-semibold text-sm tracking-wide transition-all cursor-pointer ${
+                    inputMode === mode
+                      ? "bg-vgprimary text-white shadow-md"
+                      : "text-vgon-surface/50 hover:text-vgprimary hover:bg-vgsurface-low"
+                  }`}
+                >
+                  <span className={`material-symbols-outlined !text-xl ${inputMode === mode ? "" : ""}`}>
+                    {icon}
+                  </span>
+                  {label}
+                </button>
+              ))}
             </div>
+
+            {/* Scanner mode (USB QR reader) */}
+            {inputMode === "scanner" && (
+              <div className="w-full max-w-md relative animate-[fadeIn_0.3s_ease-out]">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
+                  className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
+                  placeholder="Esperando RUN..."
+                  autoFocus
+                />
+                <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                  <span className="material-symbols-outlined !text-4xl text-vgsecondary animate-pulse">
+                    qr_code_scanner
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Camera mode */}
+            {inputMode === "camera" && (
+              <CameraScanner
+                onScan={handleCameraScan}
+                active={state === "scan-student" && inputMode === "camera"}
+              />
+            )}
+
+            {/* Manual RUT mode */}
+            {inputMode === "manual" && (
+              <div className="w-full max-w-md flex flex-col items-center gap-5 animate-[fadeIn_0.3s_ease-out]">
+                <div className="w-full relative">
+                  <input
+                    ref={manualInputRef}
+                    type="text"
+                    value={manualRut}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9kK]/g, "");
+                      if (raw.length <= 9) {
+                        setManualRut(formatManualInput(e.target.value));
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleManualSubmit();
+                    }}
+                    className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest/70 tracking-widest"
+                    placeholder="12.345.678-9"
+                    autoFocus
+                    inputMode="numeric"
+                  />
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                    <span className="material-symbols-outlined !text-4xl text-vgprimary/30">
+                      badge
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={handleManualSubmit}
+                  disabled={!manualRut.trim() || processing}
+                  className="w-full bg-vgprimary text-white py-5 rounded-2xl font-[family-name:var(--font-manrope)] font-bold text-xl flex items-center justify-center gap-3 hover:bg-vgprimary/90 active:scale-[0.98] transition-all shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                >
+                  {processing ? (
+                    <>
+                      <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                      Procesando...
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined !text-2xl">
+                        arrow_forward
+                      </span>
+                      Continuar
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
         {/* State 2: Scan Item */}
         {state === "scan-item" && (
           <div className="flex flex-col items-center text-center w-full max-w-4xl animate-[fadeIn_0.7s_ease-out]">
-            <div className="relative mb-12">
+            {/* Icon — smaller when camera is active */}
+            <div className={`relative ${inputMode === "camera" ? "mb-4" : "mb-12"}`}>
               <div className="absolute inset-0 bg-vgsecondary/5 rounded-full scale-150 blur-3xl" />
-              <div className="bg-vgsurface-lowest p-16 rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,30,0.06)] relative">
+              <div className={`bg-vgsurface-lowest rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,30,0.06)] relative transition-all ${inputMode === "camera" ? "p-8" : "p-16"}`}>
                 <span
-                  className="material-symbols-outlined text-vgsecondary !text-[160px]"
+                  className={`material-symbols-outlined text-vgsecondary transition-all ${inputMode === "camera" ? "!text-[80px]" : "!text-[160px]"}`}
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
                   inventory_2
                 </span>
               </div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-1 bg-vgprimary shadow-[0_0_15px_#002045] opacity-50" />
+              {inputMode !== "camera" && (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-1 bg-vgprimary shadow-[0_0_15px_#002045] opacity-50" />
+              )}
             </div>
             <div className="flex items-center gap-3 mb-4 bg-vgprimary/10 px-6 py-2 rounded-full border border-vgprimary/20">
               <span className="material-symbols-outlined !text-2xl text-vgprimary">
@@ -331,29 +486,66 @@ export default function KioskPage() {
                 RUN: {formatRun(studentRun)}
               </span>
             </div>
-            <h1 className="font-[family-name:var(--font-manrope)] font-extrabold text-5xl md:text-6xl text-vgprimary mb-4 tracking-tight">
+            <h1 className={`font-[family-name:var(--font-manrope)] font-extrabold text-vgprimary tracking-tight ${inputMode === "camera" ? "text-3xl md:text-4xl mb-2" : "text-5xl md:text-6xl mb-4"}`}>
               Escaneo de Artículo
             </h1>
-            <p className="text-2xl text-vgon-surface/60 max-w-2xl font-medium mb-10">
-              Escanee el código de barras o QR del artículo que desea procesar.
+            <p className={`text-vgon-surface/60 max-w-2xl font-medium ${inputMode === "camera" ? "text-lg mb-4" : "text-2xl mb-6"}`}>
+              {inputMode === "camera"
+                ? "Apunte la cámara al código QR del artículo."
+                : "Escanee el código QR del artículo que desea procesar."}
             </p>
-            <div className="w-full max-w-md relative">
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleInputKeyDown}
-                className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
-                placeholder="Esperando Artículo..."
-                autoFocus
-              />
-              <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                <span className="material-symbols-outlined !text-4xl text-vgprimary animate-pulse">
-                  barcode_scanner
-                </span>
-              </div>
+
+            {/* Mode selector for item scan (scanner / camera only) */}
+            <div className="flex items-center gap-2 p-1.5 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,32,69,0.06)] border border-vgsurface-highest/60 mb-6">
+              {([
+                { mode: "scanner" as InputMode, icon: "qr_code_scanner", label: "Lector QR" },
+                { mode: "camera" as InputMode, icon: "photo_camera", label: "Cámara" },
+              ]).map(({ mode, icon, label }) => (
+                <button
+                  key={mode}
+                  onClick={() => { setInputMode(mode); setInputValue(""); }}
+                  className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-[family-name:var(--font-inter)] font-semibold text-sm tracking-wide transition-all cursor-pointer ${
+                    inputMode === mode
+                      ? "bg-vgprimary text-white shadow-md"
+                      : "text-vgon-surface/50 hover:text-vgprimary hover:bg-vgsurface-low"
+                  }`}
+                >
+                  <span className="material-symbols-outlined !text-xl">
+                    {icon}
+                  </span>
+                  {label}
+                </button>
+              ))}
             </div>
+
+            {/* Scanner mode */}
+            {inputMode === "scanner" && (
+              <div className="w-full max-w-md relative animate-[fadeIn_0.3s_ease-out]">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
+                  className="kiosk-scanner-input w-full bg-white border-2 border-vgsurface-highest rounded-2xl p-6 text-center text-3xl font-bold text-vgprimary placeholder:text-vgsurface-highest"
+                  placeholder="Esperando Artículo..."
+                  autoFocus
+                />
+                <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                  <span className="material-symbols-outlined !text-4xl text-vgprimary animate-pulse">
+                    barcode_scanner
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Camera mode */}
+            {inputMode === "camera" && (
+              <CameraScanner
+                onScan={handleCameraScan}
+                active={state === "scan-item" && inputMode === "camera"}
+              />
+            )}
           </div>
         )}
 
@@ -520,6 +712,10 @@ export default function KioskPage() {
         }
         .material-symbols-outlined {
           font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+        }
+        @keyframes scanPulse {
+          0%, 100% { opacity: 0.3; transform: translateY(-20px); }
+          50% { opacity: 0.8; transform: translateY(20px); }
         }
       `}</style>
     </div>
